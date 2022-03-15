@@ -8,6 +8,15 @@ services:
     - 8080:80
     networks:
     - network-name
+  #Nats Service
+  ns:
+    image: nats
+    container_name: nats
+    ports:
+    - 4222:4222
+    networks:
+    - network-name
+
 
 networks:
   network-name:
