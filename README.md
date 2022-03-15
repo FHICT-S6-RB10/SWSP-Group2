@@ -1,9 +1,31 @@
 Group 2 Services
 
+## Run all containers using docker-compose
 ```
-## Go to src folder
-cd src
+docker-compose up -d
+```
 
-## Run all services using docker-compose
-docker-compose up
+## See all containers
+```
+docker ps
+```
+
+## See all images
+```
+docker images
+```
+
+## See all networks
+```
+docker network ls
+```
+
+## Stop all containers
+```
+docker-compose stop
+```
+
+## Delete all containers and networks
+```
+docker-compose down
 ```
