@@ -1,4 +1,4 @@
-Group 2 Services
+# Group 2 Services
 
 ## Run all containers using docker-compose
 ```
