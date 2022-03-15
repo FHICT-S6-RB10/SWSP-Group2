@@ -1,4 +1,4 @@
-name: Posts Write
+name: Technical Health Dashboard
 
 on:
   # run it on push to the default repository branch
