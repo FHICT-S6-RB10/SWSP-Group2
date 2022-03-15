@@ -2,7 +2,7 @@
 
 ## Run all containers using docker-compose
 ```
-docker-compose up -d
+docker-compose pull && docker-compose up -d
 ```
 
 ## See all containers
