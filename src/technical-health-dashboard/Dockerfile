@@ -1,11 +1,11 @@
 FROM node:16 AS builder
 
 # Create app directory
-WORKDIR app
+WORKDIR /app
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json and package-lock.json are copied
-COPY ./webapp/package*.json ./
+COPY ./webapp/package*.json .
 
 # Installs all node packages
 RUN npm install
@@ -25,7 +25,7 @@ WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
 
 # Copies static resources from builder stage
-COPY --from=builder /app/dist .
+COPY --from=builder ./app/dist .
 
 # Containers run nginx with global directives and daemon off
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
