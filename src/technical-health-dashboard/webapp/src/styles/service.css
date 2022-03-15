@@ -1,0 +1,9 @@
+.service {
+    display: flex;
+    align-content: center;
+    margin-bottom: 30px;
+}
+
+.service-name {
+    margin-right: 10px;
+}
