@@ -1,0 +1,14 @@
+version: '3'
+services:
+  #Technical Health Dashboard
+  thd:
+    image: swspgroup2/technical-health-dashboard
+    container_name: thd-webapp
+    ports:
+    - 8080:80
+    networks:
+    - network-name
+
+networks:
+  network-name:
+    name: swsp

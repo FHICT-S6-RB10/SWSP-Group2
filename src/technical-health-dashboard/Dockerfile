@@ -1,19 +1,31 @@
-FROM node:16
+FROM node:16 AS builder
 
 # Create app directory
 WORKDIR /usr/src/app
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json and package-lock.json are copied
-COPY ./webapp/package*.json ./
+COPY COPY ./webapp/package*.json ./
 
+# Installs all node packages
 RUN npm install
 # For production:
 # RUN npm ci --only=production
 
-# Bundle app source
+# Copies everything over to Docker environment
 COPY ./webapp ./
+RUN npm run build
 
-EXPOSE 3000
+FROM nginx:1.19.0
+# Copies React to the container directory
+# Set working directory to nginx resources directory
+WORKDIR /usr/share/nginx/html
 
-CMD [ "npm", "run", "dev" ]
+# Remove default nginx static resources
+RUN rm -rf ./*
+
+# Copies static resources from builder stage
+COPY --from=builder /app/build .
+
+# Containers run nginx with global directives and daemon off
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
