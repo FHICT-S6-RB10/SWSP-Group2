@@ -3,19 +3,19 @@ import '../styles/statusCircle.css';
 import {GREEN, RED, WHITE, YELLOW} from "../constants";
 
 const StatusCircle = (props) => {
-    const {VITE_ONLINE_STATUS, VITE_OFFLINE_STATUS, VITE_HAS_ERRORS_STATUS} = import.meta.env;
+    const {ONLINE_STATUS, OFFLINE_STATUS, HAS_ERRORS_STATUS} = window._env_;
 
     const [circleColor, setCircleColor] = useState('');
 
     useEffect(() => {
         switch (props.status) {
-            case VITE_ONLINE_STATUS:
+            case ONLINE_STATUS:
                 setCircleColor(GREEN);
                 break
-            case VITE_OFFLINE_STATUS:
+            case OFFLINE_STATUS:
                 setCircleColor(RED);
                 break
-            case VITE_HAS_ERRORS_STATUS:
+            case HAS_ERRORS_STATUS:
                 setCircleColor(YELLOW);
                 break
             default:

@@ -17,15 +17,27 @@ COPY ./webapp ./
 RUN npm run build
 
 FROM nginx:1.19.0
-# Copies React to the container directory
-# Set working directory to nginx resources directory
+
+# Nginx config
+RUN rm -rf /etc/nginx/conf.d
+COPY ./webapp/conf /etc/nginx
+
+# Static build
+COPY --from=builder /app/dist /usr/share/nginx/html/
+
+# Default port exposure
+EXPOSE 80
+
+# Copy .env file and shell script to container
 WORKDIR /usr/share/nginx/html
+COPY ./webapp/env.sh .
+COPY ./webapp/.env .
 
-# Remove default nginx static resources
-RUN rm -rf ./*
+# Add bash
+RUN apk add --no-cache bash
 
-# Copies static resources from builder stage
-COPY --from=builder ./app/dist .
+# Make our shell script executable
+RUN chmod +x env.sh
 
-# Containers run nginx with global directives and daemon off
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+# Start Nginx server
+CMD ["/bin/bash", "-c", "/usr/share/nginx/html/env.sh && nginx -g \"daemon off;\""]

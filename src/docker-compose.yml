@@ -5,10 +5,29 @@ services:
     image: swspgroup2/technical-health-dashboard
     container_name: thd-webapp
     ports:
-    - 8080:80
+    - 3000:80
     networks:
     - network-name
+    environment:
+      OFFLINE_STATUS: 0
+      ONLINE_STATUS: 1
+      HAS_ERRORS_STATUS: 2
+      SERVER_URL: ths-server
+      SERVER_PORT: 4000
 
+  ths:
+    image: ths-server
+    container_name: ths-server
+    ports:
+      - 4000:4000
+    networks:
+      - network-name
+    environment:
+      OFFLINE_STATUS: 0
+      ONLINE_STATUS: 1
+      HAS_ERRORS_STATUS: 2
+      CLIENT_URL: thd-webapp
+      CLIENT_PORT: 3000
 networks:
   network-name:
     name: swsp

@@ -3,10 +3,10 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const {OFFLINE_STATUS, ONLINE_STATUS, HAS_ERRORS_STATUS, CLIENT_URL} = process.env;
+const {OFFLINE_STATUS, ONLINE_STATUS, HAS_ERRORS_STATUS, CLIENT_URL, CLIENT_PORT} = process.env;
 
 const corsOptions = {
-    origin: CLIENT_URL,
+    origin: `${CLIENT_URL}:${CLIENT_PORT}`,
     optionSuccessStatus: 200
 }
 
