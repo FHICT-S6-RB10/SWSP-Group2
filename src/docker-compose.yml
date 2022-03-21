@@ -12,9 +12,10 @@ services:
       OFFLINE_STATUS: 0
       ONLINE_STATUS: 1
       HAS_ERRORS_STATUS: 2
-      SERVER_URL: ths-server
+      SERVER_URL: http://localhost
       SERVER_PORT: 4000
 
+  #Technical Health Service Demo
   ths:
     image: ths-server
     container_name: ths-server
@@ -26,7 +27,7 @@ services:
       OFFLINE_STATUS: 0
       ONLINE_STATUS: 1
       HAS_ERRORS_STATUS: 2
-      CLIENT_URL: thd-webapp
+      CLIENT_URL: http://localhost
       CLIENT_PORT: 3000
 networks:
   network-name:
