@@ -25,3 +25,4 @@ D:\Bojidar\University\Semester 6\Group Project\SWSP-Group2\src\technical-health-
 D:\Bojidar\University\Semester 6\Group Project\SWSP-Group2\src\technical-health-service\obj\Debug\net6.0\technical-health-service.pdb
 D:\Bojidar\University\Semester 6\Group Project\SWSP-Group2\src\technical-health-service\obj\Debug\net6.0\technical-health-service.genruntimeconfig.cache
 D:\Bojidar\University\Semester 6\Group Project\SWSP-Group2\src\technical-health-service\obj\Debug\net6.0\ref\technical-health-service.dll
+D:\Bojidar\University\Semester 6\Group Project\SWSP-Group2\src\technical-health-service\bin\Debug\net6.0\NATS.Client.dll

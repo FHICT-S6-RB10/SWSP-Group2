@@ -50,6 +50,10 @@
               "target": "Package",
               "version": "[1.14.0, )"
             },
+            "NATS.Client": {
+              "target": "Package",
+              "version": "[0.14.5, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.2.3, )"

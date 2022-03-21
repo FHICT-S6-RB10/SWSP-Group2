@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -16,6 +17,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+#region HTTP requests
 app.MapGet("/servicestates", ([FromServices] ServiceStateRepository repo) =>
 {
     return repo.GetAll();
@@ -35,16 +37,19 @@ app.MapPost("/servicestates", ([FromServices] ServiceStateRepository repo, Servi
     return Results.Created($"/servicestates/{state.name}", state);
 })
 .WithName("CreateServiceStates");
+#endregion
 
 app.Run();
 
+#region Data Management
 internal record ServiceState(string name, ServiceStatus status);
 
 
 enum ServiceStatus
 {
     UNAVAILABLE = 0,
-    AVAILABLE = 1
+    AVAILABLE = 1,
+    HAS_ERRORS = 2
 }
 
 class ServiceStateRepository
@@ -66,9 +71,9 @@ class ServiceStateRepository
 
     public ServiceState GetByName(string name)
     {
-#pragma warning disable CS8603 // Possible null reference return.
+    #pragma warning disable CS8603 // Possible null reference return.
         return _services.Find(x => x.name == name);
-#pragma warning restore CS8603 // Possible null reference return.
+    #pragma warning restore CS8603 // Possible null reference return.
     }
 
     public void Update(ServiceState state)
@@ -81,3 +86,5 @@ class ServiceStateRepository
         _services[index] = state;
     }
 }
+#endregion
+
