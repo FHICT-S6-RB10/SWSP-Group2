@@ -1,7 +1,9 @@
 import axios from 'axios';
 import {GET_SERVICES} from "../../constants";
+import {envGet} from "../../envHelper";
 
-const {SERVER_URL, SERVER_PORT} = window._env_;
+const SERVER_URL = envGet('SERVER_URL');
+const SERVER_PORT = envGet('SERVER_PORT');
 
 export const getServices = () => {
     return async dispatch => {
