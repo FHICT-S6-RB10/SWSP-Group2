@@ -5,14 +5,18 @@
     border-radius: 50%;
 }
 
-.color-1 {
+.status-circle-green {
     background-color: green;
 }
 
-.color-2 {
+.status-circle-yellow {
     background-color: yellow;
 }
 
-.color-3 {
+.status-circle-red {
     background-color: red;
+}
+
+.status-circle-white {
+    background-color: white;
 }
