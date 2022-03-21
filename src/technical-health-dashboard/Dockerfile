@@ -33,9 +33,6 @@ WORKDIR /usr/share/nginx/html
 COPY ./webapp/env.sh .
 COPY ./webapp/.env .
 
-# Add bash
-RUN apk add --no-cache bash
-
 # Make our shell script executable
 RUN chmod +x env.sh
 
