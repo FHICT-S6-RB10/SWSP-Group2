@@ -3,32 +3,26 @@ services:
   #Technical Health Dashboard
   thd:
     image: swspgroup2/technical-health-dashboard
-    container_name: thd-webapp
+    container_name: technical-health-dashboard
     ports:
-    - 3000:80
+    - ${THD_PORT}:80
     networks:
     - network-name
     environment:
-      OFFLINE_STATUS: 0
-      ONLINE_STATUS: 1
-      HAS_ERRORS_STATUS: 2
-      SERVER_URL: http://localhost
-      SERVER_PORT: 8080
+      OFFLINE_STATUS: ${OFFLINE_STATUS}
+      ONLINE_STATUS: ${ONLINE_STATUS}
+      HAS_ERRORS_STATUS: ${HAS_ERRORS_STATUS}
+      SERVER_HOST: ${THS_HOST}
+      SERVER_PORT: ${THS_PORT}
 
-  #Technical Health Service Demo
+  #Technical Health Service
   ths:
     image: swspgroup2/technical-health-service
     container_name: technical-health-service
     ports:
-      - 8080:8080
+      - ${THS_PORT}:80
     networks:
       - network-name
-    environment:
-      OFFLINE_STATUS: 0
-      ONLINE_STATUS: 1
-      HAS_ERRORS_STATUS: 2
-      CLIENT_URL: http://localhost
-      CLIENT_PORT: 3000
 
 networks:
   network-name:
