@@ -8,7 +8,7 @@ WORKDIR /src
 COPY ["EventBus.csproj", "."]
 RUN dotnet restore "./EventBus.csproj"
 COPY . .
-WORKDIR "/src/.""
+WORKDIR "/src/."
 RUN dotnet build "EventBus.csproj" -c Release -o /app/build
 
 FROM build AS publish
