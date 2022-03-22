@@ -15,6 +15,10 @@
 # AWS User-specific
 .idea/**/aws.xml
 
+# Visual studio
+.vs
+src/.vs
+
 # Generated files
 .idea/**/contentModel.xml
 

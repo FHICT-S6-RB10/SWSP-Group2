@@ -3,11 +3,28 @@ services:
   #Technical Health Dashboard
   thd:
     image: swspgroup2/technical-health-dashboard
-    container_name: thd-webapp
+    container_name: technical-health-dashboard
     ports:
-    - 8080:80
+    - ${THD_PORT}:80
     networks:
     - network-name
+
+    environment:
+      OFFLINE_STATUS: ${OFFLINE_STATUS}
+      ONLINE_STATUS: ${ONLINE_STATUS}
+      HAS_ERRORS_STATUS: ${HAS_ERRORS_STATUS}
+      SERVER_HOST: ${THS_HOST}
+      SERVER_PORT: ${THS_PORT}
+
+  #Technical Health Service
+  ths:
+    image: swspgroup2/technical-health-service
+    container_name: technical-health-service
+    ports:
+      - ${THS_PORT}:80
+    networks:
+      - network-name
+
   #Nats Service
   ns:
     image: nats
@@ -33,9 +50,6 @@ services:
     - 4222:4222
     networks:
     - network-name
-
-    
-
 
 
 networks:

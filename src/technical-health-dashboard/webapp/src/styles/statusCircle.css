@@ -1,0 +1,22 @@
+.status-circle {
+    width: 20px;
+    height: 20px;
+    border: 1px solid black;
+    border-radius: 50%;
+}
+
+.status-circle-green {
+    background-color: green;
+}
+
+.status-circle-yellow {
+    background-color: yellow;
+}
+
+.status-circle-red {
+    background-color: red;
+}
+
+.status-circle-white {
+    background-color: white;
+}
