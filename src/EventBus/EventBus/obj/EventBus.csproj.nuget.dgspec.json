@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Snechar\\Desktop\\NATSPresentation\\RequestConsole\\EventBus\\EventBus.csproj": {}
+    "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\EventBus\\EventBus\\EventBus.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Snechar\\Desktop\\NATSPresentation\\RequestConsole\\EventBus\\EventBus.csproj": {
+    "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\EventBus\\EventBus\\EventBus.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Snechar\\Desktop\\NATSPresentation\\RequestConsole\\EventBus\\EventBus.csproj",
+        "projectUniqueName": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\EventBus\\EventBus\\EventBus.csproj",
         "projectName": "EventBus",
-        "projectPath": "C:\\Users\\Snechar\\Desktop\\NATSPresentation\\RequestConsole\\EventBus\\EventBus.csproj",
-        "packagesPath": "C:\\Users\\Snechar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Snechar\\Desktop\\NATSPresentation\\RequestConsole\\EventBus\\obj\\",
+        "projectPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\EventBus\\EventBus\\EventBus.csproj",
+        "packagesPath": "C:\\Users\\gabik\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\EventBus\\EventBus\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "H:\\VS2\\NuGetPackages"
+          "D:\\Visual Studio SDK\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Snechar\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\gabik\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,7 +26,8 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
+          "https://api.nuget.org/v3/index.json": {},
+          "https://dotnet.myget.org/F/dotnet-core/api/v3/index.json": {}
         },
         "frameworks": {
           "net5.0": {
@@ -57,6 +58,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[5.0.15, )"
+            },
+            "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
+              "target": "Package",
+              "version": "[1.14.0, )"
             },
             "NATS.Client": {
               "target": "Package",

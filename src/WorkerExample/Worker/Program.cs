@@ -22,7 +22,7 @@ namespace Worker
             ConnectionFactory cf = new ConnectionFactory();
             Options opts = ConnectionFactory.GetDefaultOptions();
             opts.Url = "nats://localhost:4444";
-
+                
             IConnection c = cf.CreateConnection(opts);
 
             EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
@@ -64,7 +64,7 @@ namespace Worker
 
             };
 
-            IAsyncSubscription s = c.SubscribeAsync("worker","load-balancing-queue", h);
+            IAsyncSubscription s = c.SubscribeAsync("Worker","load-balancing-queue", h);
 
             while (true)
             {

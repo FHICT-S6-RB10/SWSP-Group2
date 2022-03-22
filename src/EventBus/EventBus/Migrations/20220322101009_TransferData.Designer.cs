@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace ConsoleApp2.Migrations
+namespace EventBus.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220321134534_Data")]
-    partial class Data
+    [Migration("20220322101009_TransferData")]
+    partial class TransferData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

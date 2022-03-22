@@ -13,9 +13,29 @@ services:
     image: nats
     container_name: nats
     ports:
+    - 4444:4444
+    networks:
+    - network-name
+  SQLExpress:
+    image: mcr.microsoft.com/mssql/server:2019-latest 
+    environment:
+       SA_PASSWORD: "MYP@SSW0RD"
+       ACCEPT_EULA: "Y"
+    container_name: SqlExpress
+    ports:
+    - 1433:1433
+    networks:
+      - network-name
+  eventbus:
+    image:  swspgroup2/eventbus
+    container_name: eventbus
+    ports:
     - 4222:4222
     networks:
     - network-name
+
+    
+
 
 
 networks:

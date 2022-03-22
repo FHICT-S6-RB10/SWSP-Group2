@@ -1,16 +1,16 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace ConsoleApp2.Migrations
+namespace EventBus.Migrations
 {
-    public partial class Data : Migration
+    public partial class TransferData : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
                 name: "RequestDTO",
                 columns: table => new
-                {visual
+                {
                     ID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Origin = table.Column<string>(type: "nvarchar(max)", nullable: true),

@@ -25,14 +25,14 @@ namespace ConsoleApp2
             {
                 while (true)
                 {
-                    var data = await dataContext.failedRequests.ToListAsync();
+                    var data = await dataContext.failedRequests.Include(w=>w.RequestDTO).ToListAsync();
 
                     foreach (var item in data)
                     {
                         try
                         {
-                            var responseData = c.RequestAsync(item.Channel, Encoding.UTF8.GetBytes(JsonSerializer.Serialize(item.RequestDTO)));
-                            var receivedOrder = Encoding.UTF8.GetString(responseData.Result.Data);
+                            var responseData = c.Request(item.Channel, Encoding.UTF8.GetBytes(JsonSerializer.Serialize(item.RequestDTO)));
+                            var receivedOrder = Encoding.UTF8.GetString(responseData.Data);
                             Console.WriteLine($"Received {receivedOrder}");
                             SuccessfulRequests dataModel = new SuccessfulRequests()
                             {
