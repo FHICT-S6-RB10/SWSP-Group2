@@ -1,4 +1,4 @@
-name: Technical Health Dashboard
+name: Event Bus
 
 on:
   # run it on push to the default repository branch
