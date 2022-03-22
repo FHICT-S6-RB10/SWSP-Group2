@@ -29,6 +29,7 @@ services:
       HAS_ERRORS_STATUS: 2
       CLIENT_URL: http://localhost
       CLIENT_PORT: 3000
+
 networks:
   network-name:
     name: swsp
