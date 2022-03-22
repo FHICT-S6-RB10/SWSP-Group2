@@ -5,7 +5,7 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
-COPY ["./EventBus/EventBus.csproj", "."]
+COPY ["event-bus/EventBus/EventBus.csproj", "."]
 RUN dotnet restore "./EventBus.csproj"
 COPY . .
 WORKDIR "/src/EventBus"
