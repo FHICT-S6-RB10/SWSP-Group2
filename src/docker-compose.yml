@@ -13,14 +13,14 @@ services:
       ONLINE_STATUS: 1
       HAS_ERRORS_STATUS: 2
       SERVER_URL: http://localhost
-      SERVER_PORT: 4000
+      SERVER_PORT: 8080
 
   #Technical Health Service Demo
   ths:
-    image: ths-server
-    container_name: ths-server
+    image: swspgroup2/technical-health-service
+    container_name: technical-health-service
     ports:
-      - 4000:4000
+      - 8080:8080
     networks:
       - network-name
     environment:
