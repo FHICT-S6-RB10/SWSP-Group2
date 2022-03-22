@@ -3,7 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
 
-const {OFFLINE_STATUS, ONLINE_STATUS, HAS_ERRORS_STATUS, CLIENT_URL, CLIENT_PORT} = process.env;
+const {OFFLINE_STATUS, ONLINE_STATUS, HAS_ERRORS_STATUS, CLIENT_URL, CLIENT_PORT, PORT} = process.env;
 
 const corsOptions = {
     origin: `${CLIENT_URL}:${CLIENT_PORT}`,
@@ -23,6 +23,6 @@ app.get('/servicestates', (req, res) => {
     res.send(services);
 });
 
-app.listen(4000, () => {
-    console.log('Listening on port 4000');
+app.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`);
 });
