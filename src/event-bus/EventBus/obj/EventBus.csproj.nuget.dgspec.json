@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\EventBus\\EventBus\\EventBus.csproj": {}
+    "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\event-bus\\EventBus\\EventBus.csproj": {}
   },
   "projects": {
-    "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\EventBus\\EventBus\\EventBus.csproj": {
+    "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\event-bus\\EventBus\\EventBus.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\EventBus\\EventBus\\EventBus.csproj",
+        "projectUniqueName": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\event-bus\\EventBus\\EventBus.csproj",
         "projectName": "EventBus",
-        "projectPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\EventBus\\EventBus\\EventBus.csproj",
+        "projectPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\event-bus\\EventBus\\EventBus.csproj",
         "packagesPath": "C:\\Users\\gabik\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\EventBus\\EventBus\\obj\\",
+        "outputPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\event-bus\\EventBus\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "D:\\Visual Studio SDK\\NuGetPackages"

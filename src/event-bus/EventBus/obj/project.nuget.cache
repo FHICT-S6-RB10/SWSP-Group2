@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/ycIpLeE8tqAEDTeIN3vUKf8mBdwXPG61y5hh0lfpZZx9YtdkeXdDFbUxwYxJimKITC0t+OtCPyTqXF0lo/4GQ==",
+  "dgSpecHash": "QOtFRMYsKlOf9mFQm3IOv7jvIDKWV6ckaHsy5AZ+LEki3gtoHUC43yrP567wsRzsleEc6jSpbS+Z8TKRb1rmZw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\EventBus\\EventBus\\EventBus.csproj",
+  "projectFilePath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\event-bus\\EventBus\\EventBus.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\gabik\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\gabik\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
