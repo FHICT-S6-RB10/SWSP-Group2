@@ -32,7 +32,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           # relative path to the place where source code with Dockerfile is located
-          context: ./src/eventbus
+          context: ./src/eventbus/EventBus
 
           # Note: tags has to be all lower-case
           tags: swspgroup2/eventbus:latest
