@@ -24,6 +24,16 @@ app.MapGet("/servicestates", ([FromServices] ServiceStateRepository repo) =>
 })
 .WithName("GetServiceStates");
 
+app.MapGet("/servicestatesmock", ([FromServices] ServiceStateRepository repo) =>
+{
+    var state1 = new ServiceState("Authentication", ServiceStatus.AVAILABLE);
+    var state2 = new ServiceState("SensorDataStorage", ServiceStatus.HAS_ERRORS);
+    repo.Create(state1);
+    repo.Create(state2);
+    return repo.GetAll();
+})
+.WithName("GetServiceStatesMock");
+
 app.MapGet("/servicestates/{name}", ([FromServices] ServiceStateRepository repo, string name) =>
 {
     var state = repo.GetByName(name);
@@ -43,7 +53,6 @@ app.Run();
 
 #region Data Management
 internal record ServiceState(string name, ServiceStatus status);
-
 
 enum ServiceStatus
 {
