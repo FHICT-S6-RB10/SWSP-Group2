@@ -2,11 +2,16 @@ using Microsoft.AspNetCore.Mvc;
 
 
 var builder = WebApplication.CreateBuilder(args);
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ServiceStateRepository>();
+builder.Services.AddCors(options =>
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        builder => builder.WithOrigins("http://localhost:6060", 
+            "http://localhost:4000", "http://localhost:3000")));
 
 var app = builder.Build();
 
