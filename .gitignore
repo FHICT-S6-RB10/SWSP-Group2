@@ -16,7 +16,8 @@
 .idea/**/aws.xml
 
 # Visual studio
-./.vs
+.vs
+src/.vs
 
 # Generated files
 .idea/**/contentModel.xml

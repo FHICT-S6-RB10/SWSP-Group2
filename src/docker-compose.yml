@@ -3,11 +3,12 @@ services:
   #Technical Health Dashboard
   thd:
     image: swspgroup2/technical-health-dashboard
-    container_name: thd-webapp
+    container_name: technical-health-dashboard
     ports:
-    - 3000:80
+    - ${THD_PORT}:80
     networks:
     - network-name
+
     environment:
       OFFLINE_STATUS: 0
       ONLINE_STATUS: 1
@@ -15,7 +16,7 @@ services:
       SERVER_URL: http://localhost
       SERVER_PORT: 6060
 
-  #Technical Health Service Demo
+  #Technical Health Service
   ths:
     image: swspgroup2/technical-health-service
     container_name: technical-health-service
@@ -23,12 +24,34 @@ services:
       - 6060:6060
     networks:
       - network-name
+
+  #Nats Service
+  ns:
+    image: nats
+    container_name: nats
+    ports:
+    - 4444:4444
+    networks:
+    - network-name
+  SQLExpress:
+    image: mcr.microsoft.com/mssql/server:2019-latest 
     environment:
-      OFFLINE_STATUS: 0
-      ONLINE_STATUS: 1
-      HAS_ERRORS_STATUS: 2
-      CLIENT_URL: http://localhost
-      CLIENT_PORT: 3000
+       SA_PASSWORD: "MYP@SSW0RD"
+       ACCEPT_EULA: "Y"
+    container_name: SqlExpress
+    ports:
+    - 1433:1433
+    networks:
+      - network-name
+  eventbus:
+    image:  swspgroup2/eventbus
+    container_name: eventbus
+    ports:
+    - 4222:4222
+    networks:
+    - network-name
+
+
 networks:
   network-name:
     name: swsp
