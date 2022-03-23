@@ -2,11 +2,16 @@ using Microsoft.AspNetCore.Mvc;
 
 
 var builder = WebApplication.CreateBuilder(args);
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ServiceStateRepository>();
+builder.Services.AddCors(options =>
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+        builder => builder.WithOrigins("http://localhost:6060", 
+            "http://localhost:4000", "http://localhost:3000")));
 
 var app = builder.Build();
 
@@ -23,6 +28,16 @@ app.MapGet("/servicestates", ([FromServices] ServiceStateRepository repo) =>
     return repo.GetAll();
 })
 .WithName("GetServiceStates");
+
+app.MapGet("/servicestatesmock", ([FromServices] ServiceStateRepository repo) =>
+{
+    var state1 = new ServiceState("Authentication", ServiceStatus.AVAILABLE);
+    var state2 = new ServiceState("SensorDataStorage", ServiceStatus.HAS_ERRORS);
+    repo.Create(state1);
+    repo.Create(state2);
+    return repo.GetAll();
+})
+.WithName("GetServiceStatesMock");
 
 app.MapGet("/servicestates/{name}", ([FromServices] ServiceStateRepository repo, string name) =>
 {
@@ -43,7 +58,6 @@ app.Run();
 
 #region Data Management
 internal record ServiceState(string name, ServiceStatus status);
-
 
 enum ServiceStatus
 {
