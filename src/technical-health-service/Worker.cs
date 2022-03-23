@@ -9,7 +9,7 @@ namespace technical_health_service
 {
     class Worker
     {
-        internal record ServiceState(Guid id, string name, ServiceStatus status);
+        internal record ServiceState(string name, ServiceStatus status);
 
         static void Main()
         {
