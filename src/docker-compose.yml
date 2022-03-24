@@ -21,7 +21,7 @@ services:
     image: swspgroup2/technical-health-service
     container_name: technical-health-service
     ports:
-      - ${THS_PORT}:6060
+      - ${THS_PORT}:80
     networks:
       - network-name
 
