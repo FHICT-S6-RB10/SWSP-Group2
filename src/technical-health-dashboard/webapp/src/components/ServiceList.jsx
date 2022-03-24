@@ -9,11 +9,16 @@ const ServiceList = () => {
     const {services, initial} = useSelector(state => state.services)
     const [styledServices, setStyledServices] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         setLoading(true);
         dispatch(getServices())
-            .then(() => setLoading(false));
+            .then(() => setLoading(false))
+            .catch((err) => {
+                setLoading(false);
+                setError(err);
+            });
     }, [dispatch])
 
     useEffect(() => {
@@ -29,8 +34,14 @@ const ServiceList = () => {
     return (
         <div className="service-list">
             <div className={"service-list-title"}>Service Status</div>
-            {loading && 'Loading...'}
-            {services.length > 0 ? styledServices : 'No services'}
+            {error ?
+                error.message
+                :
+                <>
+                    {loading && 'Loading...'}
+                    {services.length > 0 ? styledServices : 'No services'}
+                </>
+            }
         </div>
     )
 }
