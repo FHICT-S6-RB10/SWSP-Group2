@@ -11,7 +11,7 @@ builder.Services.AddSingleton<ServiceStateRepository>();
 builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         builder => builder.WithOrigins("http://localhost:6060", 
-            "http://localhost:4000", "http://localhost:3000")));
+            "http://localhost:3000", "http://localhost:3000/*", "http://localhost:80")));
 
 var app = builder.Build();
 
@@ -21,6 +21,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseCors(MyAllowSpecificOrigins);
 
 #region HTTP requests
 app.MapGet("/servicestates", ([FromServices] ServiceStateRepository repo) =>
