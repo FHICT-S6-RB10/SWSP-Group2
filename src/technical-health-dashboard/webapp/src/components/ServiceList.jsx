@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react';
 import '../styles/serviceList.css';
 import Service from "./Service";
 import {useDispatch, useSelector} from "react-redux";
-import {getServices} from "../store/actions/serviceActions";
+import {createMockServices, getServices} from "../store/actions/serviceActions";
 
 const ServiceList = () => {
     const dispatch = useDispatch();
-    const {services} = useSelector(state => state.services)
+    const {services, initial} = useSelector(state => state.services)
     const [styledServices, setStyledServices] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -17,13 +17,20 @@ const ServiceList = () => {
     }, [dispatch])
 
     useEffect(() => {
+        if(services.length === 0 && loading === false && initial === false) {
+            createMockServices();
+        }
+    }, [services, loading, initial])
+
+    useEffect(() => {
         setStyledServices(services.map(service => <Service key={service.name} service={service}/>));
     }, [services])
 
     return (
         <div className="service-list">
             <div className={"service-list-title"}>Service Status</div>
-            {loading ? 'Loading...' : styledServices}
+            {loading && 'Loading...'}
+            {services.length > 0 ? styledServices : 'No services'}
         </div>
     )
 }

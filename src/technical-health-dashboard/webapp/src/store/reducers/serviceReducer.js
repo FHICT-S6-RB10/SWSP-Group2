@@ -2,6 +2,7 @@ import {GET_SERVICES} from '../../constants';
 
 const initState = {
     services: [],
+    initial: true
 }
 
 const serviceReducer = (state = initState, action) => {
@@ -10,6 +11,7 @@ const serviceReducer = (state = initState, action) => {
             return {
                 ...state,
                 services: action.data,
+                initial: false
             }
         default:
             return state
