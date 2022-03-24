@@ -14,14 +14,14 @@ services:
       ONLINE_STATUS: 1
       HAS_ERRORS_STATUS: 2
       SERVER_URL: http://localhost
-      SERVER_PORT: 6060
+      SERVER_PORT: ${THD_PORT}
 
   #Technical Health Service
   ths:
     image: swspgroup2/technical-health-service
     container_name: technical-health-service
     ports:
-      - 6060:6060
+      - ${THS_PORT}:80
     networks:
       - network-name
 
