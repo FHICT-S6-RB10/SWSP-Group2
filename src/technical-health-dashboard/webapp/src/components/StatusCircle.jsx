@@ -11,7 +11,7 @@ const StatusCircle = (props) => {
     const [circleColor, setCircleColor] = useState('');
 
     useEffect(() => {
-        switch (props.status) {
+        switch (props.status.toString()) {
             case ONLINE_STATUS:
                 setCircleColor(GREEN);
                 break
