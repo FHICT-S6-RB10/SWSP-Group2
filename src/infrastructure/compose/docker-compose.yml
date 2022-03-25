@@ -24,10 +24,10 @@ services:
     image: nats
     container_name: nats
     ports:
-    - ${NATS_PORT}:4222
-    - ${NATS_MONITORING_PORT}:8222
+      - ${NATS_PORT}:4222
+      - ${NATS_MONITORING_PORT}:8222
     networks:
-    - network-name
+      - network-name
 
   #SQL Express
   sql-express:
