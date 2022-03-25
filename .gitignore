@@ -84,5 +84,6 @@ fabric.properties
 # Android studio 3.1+ serialized cache file
 .idea/caches/build_file_checksums.ser
 
-/src/infrastructure/compose/**.env
-/src/infrastructure/compose/.env
+# Enable before deployment
+#/src/infrastructure/compose/**.env
+#/src/infrastructure/compose/.env
