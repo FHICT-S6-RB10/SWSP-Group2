@@ -20,7 +20,7 @@ services:
       - network-name
 
   #Nats Service
-  ns:
+  nats:
     image: nats
     container_name: nats
     ports:
@@ -42,6 +42,8 @@ services:
   eventbus:
     image:  swspgroup2/eventbus
     container_name: eventbus
+    depends_on:
+      - nats
     ports:
       - ${EVENT_BUS_PORT}:4222
     networks:
