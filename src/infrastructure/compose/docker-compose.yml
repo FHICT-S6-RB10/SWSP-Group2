@@ -28,6 +28,7 @@ services:
     networks:
     - network-name
 
+  #SQL Express
   sql-express:
     image: mcr.microsoft.com/mssql/server:2019-latest
     container_name: sql-express
@@ -37,6 +38,7 @@ services:
     networks:
       - network-name
 
+  #Event Bus
   eventbus:
     image:  swspgroup2/eventbus
     container_name: eventbus

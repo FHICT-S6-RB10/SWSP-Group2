@@ -17,7 +17,7 @@ namespace ConsoleApp2
             ConnectionFactory cf = new ConnectionFactory();
             Options opts = ConnectionFactory.GetDefaultOptions();
             DataContext dataContext = new DataContext();
-            opts.Url = "nats://localhost:4444";
+            opts.Url = "nats://nats:4444";
 
             IConnection c = cf.CreateConnection(opts);
 
