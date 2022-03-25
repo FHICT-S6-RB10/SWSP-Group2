@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\worker-example\\Worker\\Worker.csproj": {}
+    "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\event-bus\\EventBus\\EventBus.csproj": {}
   },
   "projects": {
-    "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\worker-example\\Worker\\Worker.csproj": {
+    "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\event-bus\\EventBus\\EventBus.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\worker-example\\Worker\\Worker.csproj",
-        "projectName": "Worker",
-        "projectPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\worker-example\\Worker\\Worker.csproj",
+        "projectUniqueName": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\event-bus\\EventBus\\EventBus.csproj",
+        "projectName": "EventBus",
+        "projectPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\event-bus\\EventBus\\EventBus.csproj",
         "packagesPath": "C:\\Users\\gabik\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\worker-example\\Worker\\obj\\",
+        "outputPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\event-bus\\EventBus\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "D:\\Visual Studio SDK\\NuGetPackages"
@@ -45,6 +45,24 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[5.0.15, )"
+            },
+            "Microsoft.EntityFrameworkCore.SqlServer": {
+              "target": "Package",
+              "version": "[5.0.15, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[5.0.15, )"
+            },
+            "Microsoft.VisualStudio.Azure.Containers.Tools.Targets": {
+              "target": "Package",
+              "version": "[1.14.0, )"
+            },
             "NATS.Client": {
               "target": "Package",
               "version": "[0.14.5, )"

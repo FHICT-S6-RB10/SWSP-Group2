@@ -4958,11 +4958,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\WorkerExample\\Worker\\Worker.csproj",
+      "projectUniqueName": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\worker-example\\Worker\\Worker.csproj",
       "projectName": "Worker",
-      "projectPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\WorkerExample\\Worker\\Worker.csproj",
+      "projectPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\worker-example\\Worker\\Worker.csproj",
       "packagesPath": "C:\\Users\\gabik\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\WorkerExample\\Worker\\obj\\",
+      "outputPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\worker-example\\Worker\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "D:\\Visual Studio SDK\\NuGetPackages"

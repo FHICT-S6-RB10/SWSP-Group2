@@ -21,7 +21,7 @@ namespace Worker
             Console.WriteLine("Worker:");
             ConnectionFactory cf = new ConnectionFactory();
             Options opts = ConnectionFactory.GetDefaultOptions();
-            opts.Url = "nats://localhost:4444";
+            opts.Url = "nats://localhost:4222";
                 
             IConnection c = cf.CreateConnection(opts);
 
@@ -54,8 +54,16 @@ namespace Worker
                     var replyMessage = Encoding.UTF8.GetBytes("buzz");
                     c.Publish(reply, replyMessage);
                     Console.WriteLine($"Published message {Encoding.UTF8.GetString(replyMessage)} to {reply} ");
-
+                    
                 }
+                else
+                {
+                    var reply = args.Message.Reply;
+                    var replyMessage = Encoding.UTF8.GetBytes("Replied");
+                    c.Publish(reply, replyMessage);
+                    Console.WriteLine($"Published message {Encoding.UTF8.GetString(replyMessage)} to {reply} ");
+                }
+
 
 
 
