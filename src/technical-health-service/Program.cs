@@ -1,6 +1,10 @@
+using NATS.Client;
+using System.Text;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 
 
+#region API Setup
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
@@ -14,6 +18,10 @@ builder.Services.AddCors(options =>
             "http://localhost:3000", "http://localhost:3000/*", "http://localhost:80")));
 
 var app = builder.Build();
+app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
+app.UseCors(MyAllowSpecificOrigins);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -21,19 +29,50 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+#endregion 
 
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
-app.UseCors(MyAllowSpecificOrigins);
+ConnectionFactory cf = new ConnectionFactory();
+Options opts = ConnectionFactory.GetDefaultOptions();
+opts.Url = "nats://localhost:4444";
 
-#region HTTP requests
+IConnection c = cf.CreateConnection(opts);
+HttpClient client = new HttpClient();
+client.BaseAddress = new Uri("http://localhost:6060/");
+
+// For testing purposes only
+async void AddStateAsync(ServiceState state)
+{
+    HttpResponseMessage response = await client.PostAsJsonAsync(
+        "servicestates", state);
+    response.EnsureSuccessStatusCode();
+}
+
+EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
+{
+    Console.WriteLine($"Received {args.Message}");
+    string receivedMessage = Encoding.UTF8.GetString(args.Message.Data);
+    var deserializedMessage = JsonDocument.Parse(receivedMessage);
+    var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
+    var origin = deserializedMessage.RootElement.GetProperty("origin").ToString();
+
+    // Add service to the list 
+    if (decodedMessage.ToLower() == "hearthbeat")
+    {
+        var state = new ServiceState(origin, ServiceStatus.AVAILABLE);
+        AddStateAsync(state);
+    }
+};
+
+IAsyncSubscription s = c.SubscribeAsync("technical_health", h);
+
+#region HTTP request endpoints
 app.MapGet("/servicestates", ([FromServices] ServiceStateRepository repo) =>
 {
     return repo.GetAll();
 })
 .WithName("GetServiceStates");
 
+// Used for testing
 app.MapGet("/servicestatesmock", ([FromServices] ServiceStateRepository repo) =>
 {
     var state1 = new ServiceState("Authentication", ServiceStatus.AVAILABLE);
@@ -43,6 +82,16 @@ app.MapGet("/servicestatesmock", ([FromServices] ServiceStateRepository repo) =>
     return repo.GetAll();
 })
 .WithName("GetServiceStatesMock");
+
+// Used for testing
+app.MapGet("/publishmessage", ([FromServices] ServiceStateRepository repo) =>
+{
+    var request = new Request("authentication", "hearthbeat");
+    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
+    c.Publish("technical_health", message);
+    return "Message published";
+})
+.WithName("PublishMessage");
 
 app.MapGet("/servicestates/{name}", ([FromServices] ServiceStateRepository repo, string name) =>
 {
@@ -63,6 +112,8 @@ app.Run();
 
 #region Data Management
 internal record ServiceState(string name, ServiceStatus status);
+
+internal record Request(string origin, string message);
 
 enum ServiceStatus
 {
@@ -106,4 +157,3 @@ class ServiceStateRepository
     }
 }
 #endregion
-

@@ -5,13 +5,13 @@ using System.Text;
 using System.Text.Json;
 using NATS.Client;
 
-namespace technical_health_service
+namespace THS_Worker
 {
     class Worker
     {
         internal record ServiceState(string name, ServiceStatus status);
 
-        static void Main()
+        public static void Main()
         {
             ConnectionFactory cf = new ConnectionFactory();
             Options opts = ConnectionFactory.GetDefaultOptions();
