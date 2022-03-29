@@ -1,10 +1,44 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NATS.Client;
+using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<MeasurementRepository>();
 
 var app = builder.Build();
+
+ConnectionFactory cf = new ConnectionFactory();
+Options opts = ConnectionFactory.GetDefaultOptions();
+opts.Url = "nats://localhost:4222";
+
+IConnection c = cf.CreateConnection(opts);
+
+EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
+{
+    Console.WriteLine($"Received {args.Message}");
+    string receivedMessage = Encoding.UTF8.GetString(args.Message.Data);
+    var deserializedMessage = JsonDocument.Parse(receivedMessage);
+    var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
+    var origin = deserializedMessage.RootElement.GetProperty("origin").ToString();
+
+    
+    if (decodedMessage.ToLower() == "new measurement")
+    {
+        Console.WriteLine("Adding measurement to db..." + origin);
+    }
+};
+
+IAsyncSubscription s = c.SubscribeAsync("raw_data", h);
+
+app.MapGet("/publishmessage", ([FromServices] MeasurementRepository repo) =>
+{
+    var request = new Request("new measurement", "new measurement");
+    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
+    c.Publish("raw_data", message);
+    return "Message published";
+});
 
 app.MapGet("/measurements", ([FromServices] MeasurementRepository repo) => {
     return repo.GetAll();
@@ -23,6 +57,8 @@ app.MapPost("/measurements", ([FromServices] MeasurementRepository repo, Measure
 app.Run();
 
 record Measurement(int id, int userId, int stressLevel);
+
+internal record Request(string origin, string message);
 
 class MeasurementRepository {
     private readonly List<Measurement> _measurements = new List<Measurement>();
