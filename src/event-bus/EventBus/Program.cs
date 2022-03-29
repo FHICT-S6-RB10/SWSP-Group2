@@ -20,9 +20,10 @@ namespace ConsoleApp2
             ConnectionFactory cf = new ConnectionFactory();
             Options opts = ConnectionFactory.GetDefaultOptions();
             DataContext dataContext = new DataContext();
-            opts.Url = "nats://localhost:4222";
+            opts.Url = "nats://host.docker.internal:4222";
             opts.Timeout = 15500;
             IConnection c = cf.CreateConnection(opts);
+            dataContext.Database.EnsureCreated();
             EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
             {
                 Console.WriteLine($"worker received {args.Message}");
