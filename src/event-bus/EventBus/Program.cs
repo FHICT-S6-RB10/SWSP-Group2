@@ -27,46 +27,55 @@ namespace ConsoleApp2
             EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
             {
                 Console.WriteLine($"worker received {args.Message}");
-                string receivedMessage = System.Text.Encoding.UTF8.GetString(args.Message.Data);
-                var deserializedMessage = (JObject)JsonConvert.DeserializeObject(receivedMessage);
-                var decodedMessage = deserializedMessage.SelectToken("Message").ToString();
-                RequestDTO requestDTO = System.Text.Json.JsonSerializer.Deserialize<RequestDTO>(decodedMessage);
-                Console.WriteLine($"Got message: {decodedMessage}");
                 try
                 {
-                var responseData = c.Request(requestDTO.Target, Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(requestDTO)));
-                    var receivedOrder = Encoding.UTF8.GetString(responseData.Data);
-                    Console.WriteLine($"Received {receivedOrder}");
-                    SuccessfulRequests dataModel = new SuccessfulRequests()
+                    string receivedMessage = System.Text.Encoding.UTF8.GetString(args.Message.Data);
+                    var deserializedMessage = (JObject)JsonConvert.DeserializeObject(receivedMessage);
+                    var decodedMessage = deserializedMessage.SelectToken("Message").ToString();
+                    RequestDTO requestDTO = System.Text.Json.JsonSerializer.Deserialize<RequestDTO>(decodedMessage);
+                    Console.WriteLine($"Got message: {decodedMessage}");
+                    try
                     {
-                        Channel = requestDTO.Target,
-                        DateTime = DateTime.UtcNow,
-                        RequestDTO = requestDTO
+                        var responseData = c.Request(requestDTO.Target, Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(requestDTO)));
+                        var receivedOrder = Encoding.UTF8.GetString(responseData.Data);
+                        Console.WriteLine($"Received {receivedOrder}");
+                        SuccessfulRequests dataModel = new SuccessfulRequests()
+                        {
+                            Channel = requestDTO.Target,
+                            DateTime = DateTime.UtcNow,
+                            RequestDTO = requestDTO
 
 
-                    };
-                    dataContext.successfulRequests.Add(dataModel);
-                    dataContext.SaveChanges();
-                    var reply = args.Message.Reply;
-                    var replyMessage = Encoding.UTF8.GetBytes("Replied");
-                    c.Publish(reply, replyMessage);
-                    Console.WriteLine($"Order was delivered successfully");
+                        };
+                        dataContext.successfulRequests.Add(dataModel);
+                        dataContext.SaveChanges();
+                        var reply = args.Message.Reply;
+                        var replyMessage = Encoding.UTF8.GetBytes("Replied");
+                        c.Publish(reply, replyMessage);
+                        Console.WriteLine($"Order was delivered successfully");
 
+                    }
+                    catch (Exception)
+                    {
+                        Console.WriteLine($"Order could not be delivered now");
+                        FailedRequest dataModel = new FailedRequest()
+                        {
+                            RequestDTO = requestDTO,
+                            Channel = requestDTO.Target,
+                            DateTime = DateTime.UtcNow,
+
+                        };
+                        dataContext.failedRequests.Add(dataModel);
+                        dataContext.SaveChanges();
+                        Console.WriteLine("The request has been save to the database and will be sent later");
+                    }
                 }
                 catch (Exception)
                 {
-                    Console.WriteLine($"Order could not be delivered now");
-                    FailedRequest dataModel = new FailedRequest()
-                    {
-                        RequestDTO = requestDTO,
-                        Channel = requestDTO.Target,
-                        DateTime = DateTime.UtcNow,
-
-                    };
-                    dataContext.failedRequests.Add(dataModel);
-                    dataContext.SaveChanges();
-                    Console.WriteLine("The request has been save to the database and will be sent later");
+                    var replyMessage = Encoding.UTF8.GetBytes("Error : Incorrect DTO format");
+                    c.Publish(args.Message.Reply, replyMessage);
                 }
+               
             };
             IAsyncSubscription s = c.SubscribeAsync("eventbus", "load-balancing-queue", h);
 
