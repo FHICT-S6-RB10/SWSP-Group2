@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventBus.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20220322101009_TransferData")]
-    partial class TransferData
+    [Migration("20220325101307_0.1")]
+    partial class _01
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -81,6 +81,9 @@ namespace EventBus.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Origin")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Target")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");
