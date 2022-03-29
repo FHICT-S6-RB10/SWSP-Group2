@@ -4952,23 +4952,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\gabik\\.nuget\\packages\\": {},
-    "D:\\Visual Studio SDK\\NuGetPackages": {}
+    "C:\\Users\\Snechar\\.nuget\\packages\\": {},
+    "H:\\VS2\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\worker-example\\Worker\\Worker.csproj",
+      "projectUniqueName": "C:\\Users\\Snechar\\Desktop\\Facultate\\Projects\\SWSP-Group2\\src\\worker-example\\Worker\\Worker.csproj",
       "projectName": "Worker",
-      "projectPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\worker-example\\Worker\\Worker.csproj",
-      "packagesPath": "C:\\Users\\gabik\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\gabik\\Desktop\\SWSP-Group2\\src\\worker-example\\Worker\\obj\\",
+      "projectPath": "C:\\Users\\Snechar\\Desktop\\Facultate\\Projects\\SWSP-Group2\\src\\worker-example\\Worker\\Worker.csproj",
+      "packagesPath": "C:\\Users\\Snechar\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Snechar\\Desktop\\Facultate\\Projects\\SWSP-Group2\\src\\worker-example\\Worker\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "D:\\Visual Studio SDK\\NuGetPackages"
+        "H:\\VS2\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\gabik\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Snechar\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -4977,8 +4977,7 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-        "https://api.nuget.org/v3/index.json": {},
-        "https://dotnet.myget.org/F/dotnet-core/api/v3/index.json": {}
+        "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net5.0": {

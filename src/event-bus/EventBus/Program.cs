@@ -21,7 +21,7 @@ namespace ConsoleApp2
             Options opts = ConnectionFactory.GetDefaultOptions();
             DataContext dataContext = new DataContext();
             opts.Url = "nats://localhost:4222";
-
+            opts.Timeout = 15500;
             IConnection c = cf.CreateConnection(opts);
             EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
             {
@@ -69,11 +69,11 @@ namespace ConsoleApp2
             };
             IAsyncSubscription s = c.SubscribeAsync("eventbus", "load-balancing-queue", h);
 
-           
+
             int firstRun = 1;
             while (true)
             {
-                Task task1 = EventAAsync(dataContext,c);
+                Task task1 = EventAAsync(dataContext, c);
                 if (firstRun == 1)
                 {
                     Console.WriteLine("Event Bus Started");
@@ -95,26 +95,26 @@ namespace ConsoleApp2
             //    while (true)
             //    {
 
-            //    try
-            //    {
-            //    times = Convert.ToInt32(timesString);
+            //        try
+            //        {
+            //            times = Convert.ToInt32(timesString);
             //            break;
 
-            //    }
-            //    catch (Exception)
-            //    {
-            //        Console.WriteLine("Please specify a number.");
-            //        timesString = Console.ReadLine();
+            //        }
+            //        catch (Exception)
+            //        {
+            //            Console.WriteLine("Please specify a number.");
+            //            timesString = Console.ReadLine();
             //        }
             //    }
-            //    RequestDTO request = new RequestDTO("RequestConsole", message,channel);
+            //    RequestDTO request = new RequestDTO("RequestConsole", message, channel);
             //    Console.WriteLine($"Sent {message} ");
 
             //    for (int i = 0; i < times; i++)
             //    {
             //        try
             //        {
-            //           var responseData = c.RequestAsync(channel, Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(request)));
+            //            var responseData = c.RequestAsync(channel, Encoding.UTF8.GetBytes(System.Text.Json.JsonSerializer.Serialize(request)));
             //            var receivedOrder = Encoding.UTF8.GetString(responseData.Result.Data);
             //            Console.WriteLine($"Received {receivedOrder}");
             //            SuccessfulRequests dataModel = new SuccessfulRequests()
@@ -149,14 +149,14 @@ namespace ConsoleApp2
 
 
 
-            //}
+        }
 
 
             static async Task EventAAsync(DataContext dataContext, IConnection c)
             {
                 Task task1 = Task.Run(async () =>  // <- marked async
                 {
-                    Console.WriteLine("taskran");
+
                     while (true)
                     {
                         try
@@ -204,4 +204,4 @@ namespace ConsoleApp2
             }
         }
     }
-}
+
