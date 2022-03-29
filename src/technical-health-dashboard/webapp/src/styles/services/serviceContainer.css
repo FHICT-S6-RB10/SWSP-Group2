@@ -1,10 +1,11 @@
-.service-list {
+.service-container {
     padding: 20px;
-    border: 1px solid black;
     display: inline-block;
+    min-width: 270px;
+    border: 1px solid black;
 }
 
-.service-list-title {
+.service-container-title {
     font-weight: bold;
     font-size: 20px;
     margin-bottom: 30px;
