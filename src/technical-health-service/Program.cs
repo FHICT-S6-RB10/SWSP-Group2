@@ -1,3 +1,4 @@
+using System;
 using NATS.Client;
 using System.Text;
 using System.Text.Json;
@@ -15,7 +16,8 @@ builder.Services.AddSingleton<ServiceStateRepository>();
 builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         builder => builder.WithOrigins("http://localhost:6060", 
-            "http://localhost:3000", "http://localhost:3000/*", "http://localhost:80")));
+            "http://localhost:3000", "http://localhost:3000/*", 
+            "http://localhost:80", "http://localhost:6060/*")));
 
 var app = builder.Build();
 app.UseHttpsRedirection();
@@ -33,7 +35,7 @@ if (app.Environment.IsDevelopment())
 
 ConnectionFactory cf = new ConnectionFactory();
 Options opts = ConnectionFactory.GetDefaultOptions();
-opts.Url = "nats://localhost:4222";
+opts.Url = "nats://host.docker.internal:4222";
 
 IConnection c = cf.CreateConnection(opts);
 HttpClient client = new HttpClient();
@@ -64,6 +66,8 @@ EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
 };
 
 IAsyncSubscription s = c.SubscribeAsync("technical_health", h);
+IAsyncSubscription s2 = c.SubscribeAsync("Worker","load-balancing-queue", h);
+IAsyncSubscription s1 = c.SubscribeAsync("Worker","technical_health", h);
 
 #region HTTP request endpoints
 app.MapGet("/servicestates", ([FromServices] ServiceStateRepository repo) =>
