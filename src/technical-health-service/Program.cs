@@ -33,7 +33,7 @@ if (app.Environment.IsDevelopment())
 
 ConnectionFactory cf = new ConnectionFactory();
 Options opts = ConnectionFactory.GetDefaultOptions();
-opts.Url = "nats://localhost:4444";
+opts.Url = "nats://localhost:4222";
 
 IConnection c = cf.CreateConnection(opts);
 HttpClient client = new HttpClient();
@@ -86,7 +86,7 @@ app.MapGet("/servicestatesmock", ([FromServices] ServiceStateRepository repo) =>
 // Used for testing
 app.MapGet("/publishmessage", ([FromServices] ServiceStateRepository repo) =>
 {
-    var request = new Request("authentication", "hearthbeat");
+    var request = new Request("authentication", "hearthbeat", "technical-health-service");
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
     c.Publish("technical_health", message);
     return "Message published";
@@ -113,7 +113,7 @@ app.Run();
 #region Data Management
 internal record ServiceState(string name, ServiceStatus status);
 
-internal record Request(string origin, string message);
+internal record Request(string origin, string message, string target);
 
 enum ServiceStatus
 {

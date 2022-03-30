@@ -1,9 +1,0 @@
-{
-  "runtimeOptions": {
-    "additionalProbingPaths": [
-      "C:\\Users\\gabik\\.dotnet\\store\\|arch|\\|tfm|",
-      "C:\\Users\\gabik\\.nuget\\packages",
-      "D:\\Visual Studio SDK\\NuGetPackages"
-    ]
-  }
-}
