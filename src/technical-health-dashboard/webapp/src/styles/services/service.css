@@ -1,0 +1,22 @@
+.service {
+    display: flex;
+    align-content: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px solid white;
+}
+
+.service-selected {
+    border: 1px solid black;
+}
+
+.service:last-child {
+    margin-bottom: 0;
+}
+
+.service-name {
+    margin-right: 20px;
+}

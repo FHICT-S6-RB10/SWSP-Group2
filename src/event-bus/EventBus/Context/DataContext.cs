@@ -16,7 +16,7 @@ namespace ConsoleApp2
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=TransferData;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(@"Server=host.docker.internal,1433;Database=TransferData;User ID=SA;Password=1Secure*Password1;");
         }
     }
 }

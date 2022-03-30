@@ -1,0 +1,22 @@
+.message {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.message-date {
+    width: 20%;
+    margin: 0 10px;
+}
+
+.message-service {
+    width: 30%;
+    margin-right: 10px;
+}
+
+.message-text {
+    width: 40%;
+}
