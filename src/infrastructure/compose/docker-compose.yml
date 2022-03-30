@@ -1,0 +1,55 @@
+version: '3'
+services:
+  #Technical Health Dashboard
+  thd:
+    image: swspgroup2/technical-health-dashboard
+    container_name: technical-health-dashboard
+    env_file: .thd.env
+    ports:
+      - ${THD_PORT}:80
+    networks:
+      - network-name
+
+  #Technical Health Service
+  ths:
+    image: swspgroup2/technical-health-service
+    container_name: technical-health-service
+    ports:
+      - ${THS_PORT}:80
+    networks:
+      - network-name
+
+  #Nats Service
+  nats:
+    image: nats
+    container_name: nats
+    ports:
+      - ${NATS_PORT}:4222
+      - ${NATS_MONITORING_PORT}:8222
+    networks:
+      - network-name
+
+  #SQL Express
+  sql-express:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: sql-express
+    env_file: .sql-express.env
+    ports:
+      - ${SQL_EXPRESS_PORT}:1433
+    networks:
+      - network-name
+
+  #Event Bus
+  eventbus:
+    image:  swspgroup2/eventbus
+    container_name: eventbus
+    depends_on:
+      - nats
+    ports:
+      - ${EVENT_BUS_PORT}:4444
+    networks:
+      - network-name
+
+networks:
+  network-name:
+    name: swsp

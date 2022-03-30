@@ -13,14 +13,16 @@ const corsOptions = {
 const app = express();
 app.use(cors(corsOptions));
 
-const services = [
-    {name: "Technical Health Service", status: ONLINE_STATUS},
-    {name: "Sensor Data Service", status: OFFLINE_STATUS},
-    {name: "Raw Data Service", status: HAS_ERRORS_STATUS},
-];
+const services = [];
 
 app.get('/servicestates', (req, res) => {
     res.send(services);
+});
+
+app.get('/servicestatesmock', (req, res) => {
+    services.push({name: "Technical Health Service", status: ONLINE_STATUS});
+    services.push({name: "Sensor Data Service", status: OFFLINE_STATUS});
+    services.push({name: "Raw Data Service", status: HAS_ERRORS_STATUS});
 });
 
 app.listen(PORT, () => {

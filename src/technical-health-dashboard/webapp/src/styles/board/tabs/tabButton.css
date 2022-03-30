@@ -1,0 +1,26 @@
+.tab-button {
+    border-radius: 5px;
+    border: 1px solid black;
+    padding: 5px 0;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.tab-button:last-child {
+    margin-right: 0;
+}
+
+.tab-button-selected {
+    background-color: black;
+    color: white;
+}
+
+.tab-button-icon {
+    background-color: black;
+    border-radius: 4px 0 0 4px;
+    padding: 5px;
+}
+
+.tab-button-title {
+    padding: 5px;
+}
