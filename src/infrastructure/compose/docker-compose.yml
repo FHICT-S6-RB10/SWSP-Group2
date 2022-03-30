@@ -50,6 +50,15 @@ services:
     networks:
       - network-name
 
+  #Sensor Data Service
+  rds:
+    image: swspgroup2/sensor-data-service
+    container_name: sensor-data-service
+    ports:
+      - ${SDS_PORT}:80
+    networks:
+      - network-name
+
 networks:
   network-name:
     name: swsp
