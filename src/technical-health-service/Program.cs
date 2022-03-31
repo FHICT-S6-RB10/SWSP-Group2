@@ -39,7 +39,7 @@ opts.Url = "nats://host.docker.internal:4222";
 
 IConnection c = cf.CreateConnection(opts);
 HttpClient client = new HttpClient();
-client.BaseAddress = new Uri("http://localhost:6060/");
+client.BaseAddress = new Uri("http://host.docker.internal:6060/");
 
 // For testing purposes only
 async void AddStateAsync(ServiceState state)
