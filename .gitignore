@@ -194,6 +194,7 @@ bld/
 
 # Visual Studio Code
 .vscode/
+src/**/.vscode/
 
 # Visual Studio 2017 auto generated files
 Generated\ Files/
