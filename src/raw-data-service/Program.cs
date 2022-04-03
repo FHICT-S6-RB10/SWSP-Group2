@@ -2,6 +2,7 @@
 using NATS.Client;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +18,7 @@ IConnection c = cf.CreateConnection(opts);
 
 EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
 {
-    Console.WriteLine($"Received {args.Message}");
+    //Console.WriteLine($"Received {args.Message}");
     string receivedMessage = Encoding.UTF8.GetString(args.Message.Data);
     var deserializedMessage = JsonDocument.Parse(receivedMessage);
     var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
@@ -28,9 +29,21 @@ EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
     {
         Console.WriteLine("Adding measurement to db..." + origin);
     }
+
+    
 };
 
 IAsyncSubscription s = c.SubscribeAsync("raw_data", h);
+
+Timer timer = new Timer(TimerCallback, null, 0, 20000); //executes TimerCallback every 20 seconds
+
+//Method to raise event to technical health service
+void TimerCallback(object? state){
+    var message = Encoding.UTF8.GetBytes("hearthbeat");
+    c.Publish("hearthbeat", message);
+    Console.WriteLine("Heartbeat message published");
+}
+
 
 app.MapGet("/publishmessage", ([FromServices] MeasurementRepository repo) =>
 {
