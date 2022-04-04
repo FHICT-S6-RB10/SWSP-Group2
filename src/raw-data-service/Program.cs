@@ -39,18 +39,19 @@ Timer timer = new Timer(TimerCallback, null, 0, 20000); //executes TimerCallback
 
 //Method to raise event to technical health service
 void TimerCallback(object? state){
-    var message = Encoding.UTF8.GetBytes("hearthbeat");
-    c.Publish("hearthbeat", message);
+    var request = new Request("raw_data_service", "hearthbeat", "technical_health");
+    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
+    c.Publish("technical_health", message);
     Console.WriteLine("Heartbeat message published");
 }
 
 
 app.MapGet("/publishmessage", ([FromServices] MeasurementRepository repo) =>
 {
-    var request = new Request("new measurement", "new measurement");
-    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
-    c.Publish("raw_data", message);
-    return "Message published";
+    // var request = new Request("new measurement", "new measurement");
+    // var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
+    // c.Publish("raw_data", message);
+    // return "Message published";
 });
 
 app.MapGet("/measurements", ([FromServices] MeasurementRepository repo) => {
@@ -71,7 +72,7 @@ app.Run();
 
 record Measurement(int id, int userId, int stressLevel);
 
-internal record Request(string origin, string message);
+internal record Request(string origin, string message, string target);
 
 class MeasurementRepository {
     private readonly List<Measurement> _measurements = new List<Measurement>();
