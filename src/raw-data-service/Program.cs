@@ -12,7 +12,7 @@ var app = builder.Build();
 
 ConnectionFactory cf = new ConnectionFactory();
 Options opts = ConnectionFactory.GetDefaultOptions();
-opts.Url = "nats://localhost:4222";
+opts.Url = "nats://host.docker.internal:4222";
 
 IConnection c = cf.CreateConnection(opts);
 
