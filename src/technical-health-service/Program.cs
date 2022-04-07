@@ -56,6 +56,20 @@ async void AddStateAsync(ServiceState state)
     }
 }
 
+void HandleServiceState(ServiceStateRepository repo, ServiceState state)
+{
+    var existing = repo.GetByName(state.name);
+
+    if (existing != null)
+    {
+        repo.Update(state);
+    }
+    else
+    {
+        AddStateAsync(state);
+    }
+}
+
 EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
 {
     Console.WriteLine($"Received {args.Message}");
@@ -64,11 +78,11 @@ EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
     var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
     var origin = deserializedMessage.RootElement.GetProperty("origin").ToString();
 
-    // Add service to the list 
     if (decodedMessage.ToLower() == "hearthbeat")
     {
         var state = new ServiceState(origin, ServiceStatus.AVAILABLE);
-        AddStateAsync(state); 
+        var repo = app.Services.GetService<ServiceStateRepository>();
+        HandleServiceState(repo, state);
     }
 };
 
