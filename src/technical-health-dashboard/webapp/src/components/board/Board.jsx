@@ -3,6 +3,7 @@ import '../../styles/board/board.css';
 import TabContainer from "./tabs/TabContainer";
 import MessageContainer from "./messages/MessageContainer";
 import {useSelector} from "react-redux";
+import Chart from "./Chart";
 
 const Board = () => {
     const {selectedServices} = useSelector(state => state.services);
@@ -11,6 +12,9 @@ const Board = () => {
 
     return (
         <div className="board">
+            <Chart
+                selectedServices={selectedServices}
+            />
             <TabContainer
                 selectedTabs={selectedTabs}
                 setSelectedTabs={setSelectedTabs}

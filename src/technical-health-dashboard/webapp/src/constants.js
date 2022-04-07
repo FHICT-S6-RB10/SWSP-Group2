@@ -9,3 +9,9 @@ export const WHITE = 'white';
 export const ERROR = "ERROR";
 export const WARNING = "WARNING";
 export const LOG = "LOG";
+
+export const colors = {
+    'LOG': 'royalblue',
+    'WARNING': 'yellow',
+    'ERROR': 'red'
+}

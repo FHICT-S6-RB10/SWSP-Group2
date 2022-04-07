@@ -1,0 +1,36 @@
+.chart {
+    width: 200px;
+    height: 200px;
+    margin-left: auto;
+    margin-bottom: 50px;
+}
+
+.chart svg {
+    margin-bottom: 10px;
+}
+
+.chart-title {
+    display: flex;
+    justify-content: center;
+    background-color: black;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+.dash {
+    color: white;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+
+.chart-title-LOG {
+    color: royalblue;
+}
+
+.chart-title-WARNING {
+    color: yellow;
+}
+
+.chart-title-ERROR {
+    color: red;
+}
