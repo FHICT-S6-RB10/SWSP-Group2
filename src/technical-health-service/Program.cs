@@ -44,9 +44,16 @@ client.BaseAddress = new Uri("http://host.docker.internal:6060/");
 // For testing purposes only
 async void AddStateAsync(ServiceState state)
 {
-    HttpResponseMessage response = await client.PostAsJsonAsync(
+    try
+    {
+        HttpResponseMessage response = await client.PostAsJsonAsync(
         "servicestates", state);
-    response.EnsureSuccessStatusCode();
+        response.EnsureSuccessStatusCode();
+    }
+    catch 
+    {
+        Console.WriteLine("Could not add the required service!");
+    }
 }
 
 EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
@@ -61,7 +68,7 @@ EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
     if (decodedMessage.ToLower() == "hearthbeat")
     {
         var state = new ServiceState(origin, ServiceStatus.AVAILABLE);
-        AddStateAsync(state);
+        AddStateAsync(state); 
     }
 };
 
