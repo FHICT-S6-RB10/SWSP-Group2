@@ -3,10 +3,10 @@
 ## Event Bus
 A messaging service that connects different microservices over a channels and stores the sent messages in it's database.
 
-## Raw Data Service
-A microservice that receives the raw sensor data from the sensors, converts it to normalized data and stores it in it's database.
-
 ## Sensor Data Service
+A microservice that receives the data from the sensors via the mobile app, converts it to normalized data and stores it in it's database.
+
+## Raw Data Service
 A microservice that retreives the normalized sensor data from it's database.
 
 ## Technical Health Dashboard
