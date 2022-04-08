@@ -5,13 +5,6 @@ import {envGet} from "../../envHelper";
 const SERVER_HOST = envGet('SERVER_HOST');
 const SERVER_PORT = envGet('SERVER_PORT');
 
-export const createMockServices = () => {
-    axios.get(`${SERVER_HOST}:${SERVER_PORT}/servicestatesmock`)
-        .then(() => {
-            getServices();
-        })
-}
-
 export const getServices = () => {
     return async dispatch => {
         const response = await axios.get(`${SERVER_HOST}:${SERVER_PORT}/servicestates`);

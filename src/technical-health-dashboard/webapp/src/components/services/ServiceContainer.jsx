@@ -2,11 +2,11 @@ import React, {useEffect, useState} from 'react';
 import '../../styles/services/serviceContainer.css';
 import Service from "./Service";
 import {useDispatch, useSelector} from "react-redux";
-import {createMockServices, getServices, saveSelectedServices} from "../../store/actions/serviceActions";
+import {getServices, saveSelectedServices} from "../../store/actions/serviceActions";
 
 const ServiceContainer = () => {
     const dispatch = useDispatch();
-    const {services, initial} = useSelector(state => state.services);
+    const {services} = useSelector(state => state.services);
 
     const [styledServices, setStyledServices] = useState([]);
     const [selectedServices, setSelectedServices] = useState([]);
@@ -40,12 +40,6 @@ const ServiceContainer = () => {
                 setError(err);
             });
     }, [dispatch])
-
-    useEffect(() => {
-        if(services.length === 0 && loading === false && initial === false) {
-            createMockServices();
-        }
-    }, [services, loading, initial])
 
     useEffect(() => {
         setStyledServices(services.map(service => (

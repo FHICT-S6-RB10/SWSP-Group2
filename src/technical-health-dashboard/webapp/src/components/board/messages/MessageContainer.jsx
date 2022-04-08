@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import '../../../styles/board/messages/messageContainer.css';
-import {demoMessages} from "../../../demoMessages";
 import Message from "./Message";
 import {sortMessagesByDate} from "../../../utils/messages";
 
 const MessageContainer = (props) => {
-    const {selectedTabs, selectedServices} = props;
+    const {selectedTabs, selectedServices, messages} = props;
 
     const [filteredMessages, setFilteredMessages] = useState([]);
 
@@ -18,17 +17,18 @@ const MessageContainer = (props) => {
     }
 
     useEffect(() => {
-        let messages;
+        let newFilteredMessages;
 
         if(selectedServices.length === 0) {
-            messages = demoMessages.filter(message => selectedByType(message.type));
+            newFilteredMessages = messages.filter(message => selectedByType(message.type));
         } else {
-            messages = demoMessages.filter(message => selectedByType(message.type) && selectedByService(message.serviceName));
+            newFilteredMessages = messages.filter(message => selectedByType(message.type) && selectedByService(message.serviceName));
         }
 
-        sortMessagesByDate(messages);
+        sortMessagesByDate(newFilteredMessages);
 
-        setFilteredMessages(messages);
+        setFilteredMessages(newFilteredMessages);
+
     }, [selectedTabs, selectedServices])
 
     const styledMessages = filteredMessages.map(message => (

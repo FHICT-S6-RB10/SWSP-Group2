@@ -1,5 +1,7 @@
-export const GET_SERVICES = 'get_services';
-export const SET_SELECTED_SERVICES = 'set_selected_services';
+export const GET_SERVICES = 'GET_SERVICES';
+export const SET_SELECTED_SERVICES = 'SET_SELECTED_SERVICES';
+
+export const GET_MESSAGES = 'GET_MESSAGES';
 
 export const GREEN = 'green';
 export const RED = 'red';

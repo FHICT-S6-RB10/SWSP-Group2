@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import '../../styles/board/chart.css';
-import {demoMessages} from "../../demoMessages";
 import { PieChart } from 'react-minimal-pie-chart';
 import {colors, ERROR, LOG, WARNING} from "../../constants";
 
 const Chart = props => {
-    const {selectedServices} = props;
+    const {selectedServices, messages} = props;
 
     const [filteredMessages, setFilteredMessages] = useState([]);
     const [chartData, setChartData] = useState([]);
@@ -16,13 +15,13 @@ const Chart = props => {
     }
 
     useEffect(() => {
-        let messages = demoMessages;
+        let newFilteredMessages = messages;
 
         if(selectedServices.length !== 0) {
-            messages = demoMessages.filter(message => selectedByService(message.serviceName));
+            newFilteredMessages = messages.filter(message => selectedByService(message.serviceName));
         }
 
-        setFilteredMessages(messages);
+        setFilteredMessages(newFilteredMessages);
 
     }, [selectedServices]);
 
