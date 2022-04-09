@@ -39,7 +39,7 @@ Timer timer = new Timer(TimerCallback, null, 0, 20000); //executes TimerCallback
 
 //Method to raise event to technical health service
 void TimerCallback(object? state){
-    var request = new Request("raw_data_service", "hearthbeat", "technical_health");
+    var request = new Request("raw_data_service", "heartbeat", "technical_health");
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
     c.Publish("technical_health", message);
     Console.WriteLine("Heartbeat message published");

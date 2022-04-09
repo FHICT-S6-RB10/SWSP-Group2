@@ -41,15 +41,36 @@ IConnection c = cf.CreateConnection(opts);
 HttpClient client = new HttpClient();
 client.BaseAddress = new Uri("http://host.docker.internal:6060/");
 
-// For testing purposes only
-async void AddStateAsync(ServiceState state)
+
+void HandleServiceState(ServiceStateRepository repo, ServiceState state)
 {
-    HttpResponseMessage response = await client.PostAsJsonAsync(
-        "servicestates", state);
-    response.EnsureSuccessStatusCode();
+    var existing = repo.GetByName(state.name);
+
+    if (existing != null)
+        repo.Update(state);
+
+    else
+        repo.Create(state);
 }
 
-EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
+// Set the state of service to UNAVAILABLE if a hearthbeat was not recieved in time
+void UpdateStates()
+{
+    var repo = app.Services.GetService<ServiceStateRepository>();
+    var services = repo.GetAll().ToList();
+
+    foreach (ServiceState service in services)
+    {
+        var diff = DateTime.Now - service.lastUpdated;
+        if (diff.TotalSeconds > 35)
+        {
+            var serviceUpdated = new ServiceState(service.name, ServiceStatus.UNAVAILABLE, service.lastUpdated);
+            repo.Update(serviceUpdated);
+        }
+    }
+}
+
+EventHandler<MsgHandlerEventArgs> heartbeatHandler = (sender, args) =>
 {
     Console.WriteLine($"Received {args.Message}");
     string receivedMessage = Encoding.UTF8.GetString(args.Message.Data);
@@ -57,45 +78,40 @@ EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
     var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
     var origin = deserializedMessage.RootElement.GetProperty("origin").ToString();
 
-    // Add service to the list 
-    if (decodedMessage.ToLower() == "hearthbeat")
+    if (decodedMessage.ToLower() == "heartbeat")
     {
-        var state = new ServiceState(origin, ServiceStatus.AVAILABLE);
-        AddStateAsync(state);
+        var state = new ServiceState(origin, ServiceStatus.AVAILABLE, DateTime.Now);
+        var repo = app.Services.GetService<ServiceStateRepository>();
+        if (repo != null)
+            HandleServiceState(repo, state);
+        else
+            Console.WriteLine("Error: couldn't find the service state repository, Program.cs - line 68");
     }
 };
 
-IAsyncSubscription s = c.SubscribeAsync("technical_health", h);
-IAsyncSubscription s2 = c.SubscribeAsync("Worker","load-balancing-queue", h);
-IAsyncSubscription s1 = c.SubscribeAsync("Worker","technical_health", h);
+//EventHandler<MsgHandlerEventArgs> logHandler = (sender, args) =>
+//{
+//    string receivedMessage = Encoding.UTF8.GetString(args.Message.Data);
+//    var deserializedMessage = JsonDocument.Parse(receivedMessage);
+//    var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
+//    var origin = deserializedMessage.RootElement.GetProperty("origin").ToString();
+
+//    Console.WriteLine("Error: couldn't find the service state repository, Program.cs - line 68");
+//};
+
+IAsyncSubscription s = c.SubscribeAsync("technical_health", heartbeatHandler);
+//IAsyncSubscription logSubscription = c.SubscribeAsync("th_logs", logHandler);
+//IAsyncSubscription warnSubscription = c.SubscribeAsync("th_warnings", warningHandler);
+//IAsyncSubscription errSubscription = c.SubscribeAsync("th_errors", errorHandler);
+
 
 #region HTTP request endpoints
 app.MapGet("/servicestates", ([FromServices] ServiceStateRepository repo) =>
 {
+    UpdateStates();
     return repo.GetAll();
 })
 .WithName("GetServiceStates");
-
-// Used for testing
-app.MapGet("/servicestatesmock", ([FromServices] ServiceStateRepository repo) =>
-{
-    var state1 = new ServiceState("Authentication", ServiceStatus.AVAILABLE);
-    var state2 = new ServiceState("SensorDataStorage", ServiceStatus.HAS_ERRORS);
-    repo.Create(state1);
-    repo.Create(state2);
-    return repo.GetAll();
-})
-.WithName("GetServiceStatesMock");
-
-// Used for testing
-app.MapGet("/publishmessage", ([FromServices] ServiceStateRepository repo) =>
-{
-    var request = new Request("authentication", "hearthbeat", "technical-health-service");
-    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
-    c.Publish("technical_health", message);
-    return "Message published";
-})
-.WithName("PublishMessage");
 
 app.MapGet("/servicestates/{name}", ([FromServices] ServiceStateRepository repo, string name) =>
 {
@@ -103,6 +119,16 @@ app.MapGet("/servicestates/{name}", ([FromServices] ServiceStateRepository repo,
     return state is not null ? Results.Ok(state) : Results.NotFound();
 })
 .WithName("GetServiceStateByName");
+
+// Used for testing
+app.MapGet("/publishmessage", ([FromServices] ServiceStateRepository repo) =>
+{
+    var request = new Request("authentication", "heartbeat", "technical-health-service");
+    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
+    c.Publish("technical_health", message);
+    return "Message published";
+})
+.WithName("PublishMessage");
 
 app.MapPost("/servicestates", ([FromServices] ServiceStateRepository repo, ServiceState state) =>
 {
@@ -115,7 +141,9 @@ app.MapPost("/servicestates", ([FromServices] ServiceStateRepository repo, Servi
 app.Run();
 
 #region Data Management
-internal record ServiceState(string name, ServiceStatus status);
+internal record ServiceState(string name, ServiceStatus status, DateTime lastUpdated);
+
+internal record Log(string name, ServiceStatus status);
 
 internal record Request(string origin, string message, string target);
 
@@ -159,5 +187,11 @@ class ServiceStateRepository
         int index = _services.IndexOf(existingState);
         _services[index] = state;
     }
+}
+
+class LogsRepository
+{
+    private readonly List<ServiceState> _logs = new List<ServiceState>();
+
 }
 #endregion
