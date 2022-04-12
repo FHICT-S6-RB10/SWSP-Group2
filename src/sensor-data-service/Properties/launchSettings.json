@@ -3,18 +3,18 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:55952",
-      "sslPort": 44384
+      "applicationUrl": "http://localhost:42952",
+      "sslPort": 44364
     }
   },
   "profiles": {
-    "Sensor_Data_Service": {
+    "sensor_data_service": {
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://localhost:7255;http://localhost:5255",
+      "applicationUrl": "https://localhost:7194;http://localhost:5194",
       "dotnetRunMessages": true
     },
     "IIS Express": {
