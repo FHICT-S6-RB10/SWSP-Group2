@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Nodes;
 
 var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddSingleton<MeasurementRepo>();
@@ -47,7 +48,7 @@ var app = builder.Build();
 
 app.MapPost("/measurements/", async (Measurement measurement) => {
 
-    Console.WriteLine(measurement);
+    Console.WriteLine(measurement.jsonContent);
     return Results.Created($"/measurements/{measurement.patientId}", measurement);
 });
 
@@ -57,9 +58,9 @@ public class Measurement
 {
     public string patientId { get; set; }
     public string patientName { get; set; }
-    public JsonContent jsonContent { get; set; }
+    public JsonValue jsonContent { get; set; }
 
-    public Measurement(string patientId, string patientName, JsonContent jsonContent)
+    public Measurement(string patientId, string patientName, JsonValue jsonContent)
     {
         this.patientId = patientId;
         this.patientName = patientName;
