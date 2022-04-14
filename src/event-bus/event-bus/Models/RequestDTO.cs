@@ -4,17 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp2
+namespace event_bus.Models
 {
     class RequestDTO
     {
         public RequestDTO(string origin, string message, string target)
         {
-            this.Origin = origin;
-            this.Message = message;
-            this.Date = DateTime.Now;
-            this.Target = target;
-             
+            Origin = origin;
+            Message = message;
+            Date = DateTime.Now;
+            Target = target;
+
         }
 
         //do not mention ID, it is used for database
@@ -27,6 +27,6 @@ namespace ConsoleApp2
         public DateTime Date { get; set; }
         //Json string
         public string Message { get; set; }
-        
+
     }
 }
