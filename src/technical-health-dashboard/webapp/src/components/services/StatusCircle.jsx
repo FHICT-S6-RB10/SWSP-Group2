@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import '../../styles/services/statusCircle.css';
 import {GREEN, RED, WHITE, YELLOW} from "../../constants";
-import {envGet} from "../../envHelper";
+import {envGet} from "../../utils/envHelper";
 
 const StatusCircle = (props) => {
     const ONLINE_STATUS = envGet('ONLINE_STATUS');

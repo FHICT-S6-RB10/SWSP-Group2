@@ -7,6 +7,7 @@ const MessageContainer = (props) => {
     const {selectedTabs, selectedServices, messages} = props;
 
     const [filteredMessages, setFilteredMessages] = useState([]);
+    const [styledMessages, setStyledMessages] = useState([]);
 
     const selectedByService = serviceName => {
         return selectedServices.indexOf(serviceName) > -1;
@@ -29,11 +30,15 @@ const MessageContainer = (props) => {
 
         setFilteredMessages(newFilteredMessages);
 
-    }, [selectedTabs, selectedServices])
+    }, [selectedTabs, selectedServices, messages])
 
-    const styledMessages = filteredMessages.map(message => (
-        <Message key={message.id} message={message}/>
-    ));
+    useEffect(() => {
+        const newStyledMessages = filteredMessages.map(message => (
+            <Message key={message.id} message={message}/>
+        ));
+
+        setStyledMessages(newStyledMessages);
+    }, [filteredMessages]);
 
     return (
         <div className="message-container">

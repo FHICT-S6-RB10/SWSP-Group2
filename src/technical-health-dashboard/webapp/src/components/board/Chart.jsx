@@ -23,7 +23,7 @@ const Chart = props => {
 
         setFilteredMessages(newFilteredMessages);
 
-    }, [selectedServices]);
+    }, [selectedServices, messages]);
 
     useEffect(() => {
         const counts = {};

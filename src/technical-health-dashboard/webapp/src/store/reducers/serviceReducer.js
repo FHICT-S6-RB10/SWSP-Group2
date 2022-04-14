@@ -1,4 +1,4 @@
-import {GET_SERVICES, SET_SELECTED_SERVICES} from '../../constants';
+import {SET_SERVICES, SET_SELECTED_SERVICES} from '../../constants';
 
 const initState = {
     services: [],
@@ -7,10 +7,10 @@ const initState = {
 
 const serviceReducer = (state = initState, action) => {
     switch (action.type) {
-        case GET_SERVICES:
+        case SET_SERVICES:
             return {
-                ...state,
                 services: action.data,
+                selectedServices: action.data.map(service => service.name)
             }
         case SET_SELECTED_SERVICES:
             return {
