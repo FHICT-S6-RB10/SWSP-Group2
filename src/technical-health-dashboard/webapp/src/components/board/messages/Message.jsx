@@ -1,14 +1,17 @@
 import React from 'react';
 import '../../../styles/board/messages/message.css';
 import MessageIcon from "../MessageIcon";
+import {convertDate} from "../../../utils/dates";
 
 const Message = (props) => {
-    const {date, serviceName, message, type} = props.message;
+    const {invoked, origin, message, level} = props.message;
+
+    const date = convertDate(invoked);
     return (
         <div className="message">
-            <MessageIcon type={type}/>
+            <MessageIcon level={level}/>
             <div className="message-date">{date}</div>
-            <div className="message-service">{serviceName}</div>
+            <div className="message-service">{origin}</div>
             <div className="message-text">{message}</div>
         </div>
     )

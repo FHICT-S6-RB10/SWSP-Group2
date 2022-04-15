@@ -1,25 +1,49 @@
+import {envGet} from "./utils/envHelper";
+
+export const SOCKET_HOST = "SOCKET_HOST";
+export const SOCKET_PORT = "SOCKET_PORT";
+
 export const SET_SERVICES = 'GET_SERVICES';
 export const SET_SELECTED_SERVICES = 'SET_SELECTED_SERVICES';
 
 export const SET_MESSAGES = 'GET_MESSAGES';
 
-export const GREEN = 'green';
-export const RED = 'red';
-export const YELLOW = 'yellow';
-export const WHITE = 'white';
+const OFFLINE = envGet("OFFLINE_STATUS");
+const ONLINE = envGet("ONLINE_STATUS");
+const HAS_ERRORS = envGet("HAS_ERRORS_STATUS");
 
-export const ERROR = "ERROR";
-export const WARNING = "WARNING";
-export const LOG = "LOG";
+export const UNKNOWN = envGet("UNKNOWN_LEVEL");
+export const LOG = envGet("LOG_LEVEL");
+export const WARNING = envGet("WARNING_LEVEL");
+export const ERROR = envGet("ERROR_LEVEL");
 
-export const SERVER_HOST = "SERVER_HOST";
-export const SERVER_PORT = "SERVER_PORT";
+const UNKNOWN_ICON = 'fa-solid fa-circle-question';
+const LOG_ICON = 'fa-solid fa-triangle-exclamation';
+const WARNING_ICON = 'fa-solid fa-circle-exclamation';
+const ERROR_ICON = 'fa-solid fa-circle-info'
 
-export const SOCKET_HOST = "SOCKET_HOST";
-export const SOCKET_PORT = "SOCKET_PORT";
+const GREEN = 'green';
+const RED = 'red';
+const YELLOW = 'yellow';
+const WHITE = 'white';
+const BLUE = 'royalblue';
 
-export const colors = {
-    'LOG': 'royalblue',
-    'WARNING': 'yellow',
-    'ERROR': 'red'
+export const serviceColors = {
+    [ONLINE]: GREEN,
+    [HAS_ERRORS]: YELLOW,
+    [OFFLINE]: RED
+}
+
+export const messageColors = {
+    [UNKNOWN]: WHITE,
+    [LOG]: BLUE,
+    [WARNING]: YELLOW,
+    [ERROR]: RED
+}
+
+export const messageIcons = {
+    [UNKNOWN]: UNKNOWN_ICON,
+    [LOG]: LOG_ICON,
+    [WARNING]: WARNING_ICON,
+    [ERROR]: ERROR_ICON
 }
