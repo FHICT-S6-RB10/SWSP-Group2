@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         builder => builder.WithOrigins("http://localhost:6060", 
             "http://localhost:3000", "http://localhost:3000/*", 
-            "http://localhost:80", "http://localhost:6060/*")));
+            "http://localhost:6000", "http://localhost:6060/*")));
 
 var app = builder.Build();
 app.UseHttpsRedirection();
@@ -128,7 +128,8 @@ void OnHeartbeatEvent(object sender, MsgHandlerEventArgs args, WatsonWsServer se
             Console.WriteLine("Error: couldn't find the service state repository, Program.cs - line 68");
     }
 
-    SendServicesAndMessages(server, app, server.ListClients().First());
+    if (server.ListClients().Count() > 0)
+        SendServicesAndMessages(server, app, server.ListClients().First());
 }
 
 EventHandler<MsgHandlerEventArgs> loggingEventHandler = (sender, args) => OnLoggingEvent(sender, args, server, app);
@@ -158,7 +159,8 @@ void OnLoggingEvent(object sender, MsgHandlerEventArgs args, WatsonWsServer serv
             Console.WriteLine("Error: couldn't find the service logging repository, Program.cs - line 110");
     }
 
-    SendServicesAndMessages(server, app, server.ListClients().First());
+    if (server.ListClients().Count() > 0)
+        SendServicesAndMessages(server, app, server.ListClients().First());
 }
 
 LogLevel getLogLevelFor(string subject)
