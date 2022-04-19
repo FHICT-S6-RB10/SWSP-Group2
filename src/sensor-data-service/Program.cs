@@ -49,7 +49,25 @@ var app = builder.Build();
 app.MapPost("/measurements/", async (Measurement measurement) => {
 
     Console.WriteLine(measurement.jsonContent);
+    Console.WriteLine(measurement.wearableId);
+    //Console.WriteLine(measurement.jsonContent["Interval"].GetValue<int>());
+
+    double valueRR = measurement.jsonContent["Interval"].GetValue<int>();
+    Console.WriteLine(valueRR);
+
+    if (valueRR > 200 && valueRR < 1200)
+    {
+        //send message on event buys
+        Console.WriteLine(" normal RR");
+    }
+    else
+    {
+        Console.WriteLine(" RR to high");
+    }
+
     return Results.Created($"/measurements/{measurement.patientId}", measurement);
+
+
 });
 
 app.Run();
@@ -57,16 +75,34 @@ app.Run();
 public class Measurement
 {
     public string patientId { get; set; }
-    public string patientName { get; set; }
-    public JsonValue jsonContent { get; set; }
+    public string wearableId { get; set; }
+    public JsonObject jsonContent { get; set; }
 
-    public Measurement(string patientId, string patientName, JsonValue jsonContent)
+    public Measurement(string patientId, string wearableId, JsonObject jsonContent)
     {
         this.patientId = patientId;
-        this.patientName = patientName;
+        this.wearableId = wearableId;
         this.jsonContent = jsonContent;
     }
+
+    public double NormalizeJSON(double value, double min, double max)
+    {
+        double normalized = (value - min) / (max - min);
+        return normalized;
+        //normalized = (x - min(x)) / (max(x) - min(x))
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
 //record Measurement(string PatientId, string DeviceId, JsonContent content);
 
 //class MeasurementRepo
