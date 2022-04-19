@@ -3,6 +3,7 @@ using NATS.Client;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using WatsonWebsocket;
 
 
 #region API Setup
@@ -42,7 +43,43 @@ IConnection c = cf.CreateConnection(opts);
 HttpClient client = new HttpClient();
 client.BaseAddress = new Uri("http://host.docker.internal:6060/");
 
+#region Websocket connection
+WatsonWsServer server = new WatsonWsServer("localhost", 6000, false);
+server.ClientConnected += (sender, args) => ClientConnected(sender, args, server, app);
+server.ClientDisconnected += ClientDisconnected;
+server.MessageReceived += MessageReceived;
+server.Start();
 
+static void ClientConnected(object sender, ClientConnectedEventArgs args, WatsonWsServer server, WebApplication app)
+{
+    Console.WriteLine("Client connected: " + args.IpPort);
+    SendServicesAndMessages(server, app, args.IpPort);
+}
+
+static void ClientDisconnected(object sender, ClientDisconnectedEventArgs args)
+{
+    Console.WriteLine("Client disconnected: " + args.IpPort);
+}
+
+static void MessageReceived(object sender, MessageReceivedEventArgs args)
+{
+    Console.WriteLine("Message received from " + args.IpPort + ": " + Encoding.UTF8.GetString(args.Data));
+}
+
+static void SendServicesAndMessages(WatsonWsServer server, WebApplication app, string address)
+{
+    var logRepo = app.Services.GetService<ServiceLoggingRepository>();
+    var stateRepo = app.Services.GetService<ServiceStateRepository>();
+
+    var logs = JsonSerializer.Serialize(logRepo.GetAll());
+    var states = JsonSerializer.Serialize(stateRepo.GetAll());
+    var data = $"{{services: {states}, messages: {logs}}}";
+
+    _ = server.SendAsync(address, data);
+}
+#endregion
+
+#region Message Handling
 void HandleServiceState(ServiceStateRepository repo, ServiceState state)
 {
     var existing = repo.GetByName(state.name);
@@ -71,7 +108,9 @@ void UpdateStates()
     }
 }
 
-EventHandler<MsgHandlerEventArgs> heartbeatHandler = (sender, args) =>
+EventHandler<MsgHandlerEventArgs> heartbeatHandler = (sender, args) => OnHeartbeatEvent(sender, args, server, app);
+
+void OnHeartbeatEvent(object sender, MsgHandlerEventArgs args, WatsonWsServer server, WebApplication app)
 {
     Console.WriteLine($"Received {args.Message}");
     string receivedMessage = Encoding.UTF8.GetString(args.Message.Data);
@@ -88,9 +127,13 @@ EventHandler<MsgHandlerEventArgs> heartbeatHandler = (sender, args) =>
         else
             Console.WriteLine("Error: couldn't find the service state repository, Program.cs - line 68");
     }
-};
 
-EventHandler<MsgHandlerEventArgs> loggingEventHandler = (sender, args) =>
+    SendServicesAndMessages(server, app, server.ListClients().First());
+}
+
+EventHandler<MsgHandlerEventArgs> loggingEventHandler = (sender, args) => OnLoggingEvent(sender, args, server, app);
+
+void OnLoggingEvent(object sender, MsgHandlerEventArgs args, WatsonWsServer server, WebApplication app)
 {
     Console.WriteLine($"Received log: {args.Message}");
     string subject = args.Message.Subject.ToString();
@@ -107,16 +150,16 @@ EventHandler<MsgHandlerEventArgs> loggingEventHandler = (sender, args) =>
         var message = new LogMessage(logLevel, origin, decodedMessage, DateTime.Now);
         var repo = app.Services.GetService<ServiceLoggingRepository>();
         if (repo != null)
+        {
             repo.Create(message);
+            //SendServicesAndMessages()
+        }
         else
             Console.WriteLine("Error: couldn't find the service logging repository, Program.cs - line 110");
     }
-};
 
-IAsyncSubscription s = c.SubscribeAsync("technical_health", heartbeatHandler);
-IAsyncSubscription logSubscription = c.SubscribeAsync("th_logs", loggingEventHandler);
-IAsyncSubscription warnSubscription = c.SubscribeAsync("th_warnings", loggingEventHandler);
-IAsyncSubscription errSubscription = c.SubscribeAsync("th_errors", loggingEventHandler);
+    SendServicesAndMessages(server, app, server.ListClients().First());
+}
 
 LogLevel getLogLevelFor(string subject)
 {
@@ -132,6 +175,13 @@ LogLevel getLogLevelFor(string subject)
             return LogLevel.UNKNOWN;
     }
 }
+#endregion
+
+// Event Bus subscriptions
+IAsyncSubscription s = c.SubscribeAsync("technical_health", heartbeatHandler);
+IAsyncSubscription logSubscription = c.SubscribeAsync("th_logs", loggingEventHandler);
+IAsyncSubscription warnSubscription = c.SubscribeAsync("th_warnings", loggingEventHandler);
+IAsyncSubscription errSubscription = c.SubscribeAsync("th_errors", loggingEventHandler);
 
 #region HTTP request endpoints
 app.MapGet("/servicestates", ([FromServices] ServiceStateRepository repo) =>
