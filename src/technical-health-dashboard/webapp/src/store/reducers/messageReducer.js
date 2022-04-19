@@ -1,4 +1,4 @@
-import {GET_MESSAGES} from '../../constants';
+import {SET_MESSAGES} from '../../constants';
 
 const initState = {
     messages: []
@@ -6,7 +6,7 @@ const initState = {
 
 const messageReducer = (state = initState, action) => {
     switch (action.type) {
-        case GET_MESSAGES:
+        case SET_MESSAGES:
             return {
                 ...state,
                 messages: action.data,

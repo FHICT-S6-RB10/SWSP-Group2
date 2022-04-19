@@ -2,24 +2,28 @@ import React from 'react';
 import '../../../styles/board/tabs/tabContainer.css';
 import TabButton from "./TabButton";
 import MessageIcon from "../MessageIcon";
-import {ERROR, LOG, WARNING} from "../../../constants";
+import {ERROR, LOG, UNKNOWN, WARNING} from "../../../constants";
 
 const tabs = {
-    LOG: {
+    [LOG]: {
         title: "Logs",
-        icon: <MessageIcon type={LOG}/>
+        icon: <MessageIcon level={LOG}/>
     },
-    WARNING: {
+    [WARNING]: {
         title: "Warnings",
-        icon: <MessageIcon type={WARNING}/>
+        icon: <MessageIcon level={WARNING}/>
     },
-    ERROR: {
+    [ERROR]: {
         title: "Errors",
-        icon: <MessageIcon type={ERROR}/>
+        icon: <MessageIcon level={ERROR}/>
+    },
+    [UNKNOWN]: {
+        title: "Unknown",
+        icon: <MessageIcon level={UNKNOWN}/>
     }
 }
 
-const TabContainer = (props) => {
+const TabContainer = props => {
     const {selectedTabs, setSelectedTabs} = props;
 
     const isSelected = id => {
