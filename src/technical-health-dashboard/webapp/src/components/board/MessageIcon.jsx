@@ -1,39 +1,14 @@
 import React from 'react';
-import {ERROR, LOG, WARNING} from "../../constants";
-import '../../styles/board/icons.css';
+import {messageColors, messageIcons} from "../../constants";
 
-const MessageIcon = (props) => {
-    const {type} = props;
+const MessageIcon = props => {
+    const {level} = props;
 
-    switch (type) {
-        case ERROR:
-            return (
-                <span className={`tab-button-icon ${type}`}>
-                    <i className="fa-solid fa-triangle-exclamation"/>
-                </span>
-            );
-
-        case WARNING:
-            return (
-                <span className={`tab-button-icon ${type}`}>
-                    <i className="fa-solid fa-circle-exclamation"/>
-                </span>
-            );
-
-        case LOG:
-            return (
-                <span className={`tab-button-icon ${type}`}>
-                    <i className="fa-solid fa-circle-info"/>
-                </span>
-            );
-
-        default:
-            return (
-                <span className={`tab-button-icon ${type}`}>
-                    <i className="fa-solid fa-circle-info"/>
-                </span>
-            );
-    }
+    return (
+        <span className={`tab-button-icon`} style={{color: messageColors[level]}}>
+            <i className={messageIcons[level]}/>
+        </span>
+    );
 }
 
 export default MessageIcon;
