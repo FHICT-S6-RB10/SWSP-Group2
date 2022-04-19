@@ -24,54 +24,40 @@ builder.Services.AddSingleton<MeasurementsService>();
 
 var app = builder.Build();
 
-// BsonDocument mesur = new BsonDocument{
-//     {"data", new BsonDocument {
-//         { "heartRate", "pederas"}
-//     } }
-// };
-Measurement m = new Measurement();
-m.Data = new BsonDocument{
-    {"heartRate", new BsonDocument {
-       {"average", 81.5 },
-       {"rrData", 710} 
-    }}
+#region event bus
+ConnectionFactory cf = new ConnectionFactory();
+Options opts = ConnectionFactory.GetDefaultOptions();
+opts.Url = "nats://host.docker.internal:4222";
+
+IConnection c = cf.CreateConnection(opts);
+
+EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
+{
+    //Console.WriteLine($"Received {args.Message}");
+    string receivedMessage = Encoding.UTF8.GetString(args.Message.Data);
+    var deserializedMessage = JsonDocument.Parse(receivedMessage);
+    var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
+    var origin = deserializedMessage.RootElement.GetProperty("origin").ToString();
+
+
+    if (decodedMessage.ToLower() == "new measurement")
+    {
+        Console.WriteLine("Adding measurement to db..." + origin);
+    }
 };
 
-// await service.CreateAsync(m);
+IAsyncSubscription s = c.SubscribeAsync("raw_data", h);
 
-#region event bus
-// ConnectionFactory cf = new ConnectionFactory();
-// Options opts = ConnectionFactory.GetDefaultOptions();
-// opts.Url = "nats://host.docker.internal:4222";
+Timer timer = new Timer(TimerCallback, null, 0, 20000); //executes TimerCallback every 20 seconds
 
-// IConnection c = cf.CreateConnection(opts);
-
-// EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
-// {
-//     //Console.WriteLine($"Received {args.Message}");
-//     string receivedMessage = Encoding.UTF8.GetString(args.Message.Data);
-//     var deserializedMessage = JsonDocument.Parse(receivedMessage);
-//     var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
-//     var origin = deserializedMessage.RootElement.GetProperty("origin").ToString();
-
-    
-//     if (decodedMessage.ToLower() == "new measurement")
-//     {
-//         Console.WriteLine("Adding measurement to db..." + origin);
-//     }
-// };
-
-// IAsyncSubscription s = c.SubscribeAsync("raw_data", h);
-
-// Timer timer = new Timer(TimerCallback, null, 0, 20000); //executes TimerCallback every 20 seconds
-
-// //Method to raise event to technical health service
-// void TimerCallback(object? state){
-//     var request = new Request("raw_data_service", "heartbeat", "technical_health");
-//     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
-//     c.Publish("technical_health", message);
-//     Console.WriteLine("Heartbeat message published");
-// }
+//Method to raise event to technical health service
+void TimerCallback(object? state)
+{
+    var request = new Request("raw_data_service", "heartbeat", "technical_health");
+    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
+    c.Publish("technical_health", message);
+    Console.WriteLine("Heartbeat message published");
+}
 
 // Used for testing purposes
 // app.MapGet("/publishmessage", ([FromServices] MeasurementRepository repo) =>
@@ -86,9 +72,28 @@ m.Data = new BsonDocument{
 
 #region api calls
 //Getting all measurements 
-// app.MapGet("/measurements", ([FromServices] MeasurementRepository repo) => {
-//     return repo.GetAll();
-// });
+app.MapGet("/measurements", async ([FromServices] MeasurementsService repo) =>
+{
+    List<Measurement> mesurs = await repo.GetAsync();
+    foreach (var me in mesurs)
+    {
+        Console.WriteLine($"ID: {me.Id} DATA:{me.Data}");
+    };
+});
+// Create a new measurement
+app.MapPost("/measurements", async ([FromServices] MeasurementsService repo) =>
+{
+    Measurement m = new Measurement();
+    m.Data = new BsonDocument{
+    {"heartRate", new BsonDocument {
+       {"average", 82.5 },
+       {"rrData", 710}
+    }}
+};
+    await repo.CreateAsync(m);
+    return ($"I dont event know if {m} is created");
+    // return Results.Created($"/measurements/{measurement.id}", measurement);
+});
 
 // //Get measurement by its id
 // app.MapGet("/measurements/{id}", ([FromServices] MeasurementRepository repo) => {
@@ -100,13 +105,6 @@ m.Data = new BsonDocument{
 //     var measurement = repo.GetByUserId(id);
 //     return measurement is not null ? Results.Ok(measurement) : Results.NotFound();
 // });
-
-//Create a new measurement
-app.MapPost("/measurements", ([FromServices] MeasurementsService repo, Measurement measurement) => {
-    repo.CreateAsync(m);
-    return($"I dont event know if {measurement} is created");
-    // return Results.Created($"/measurements/{measurement.id}", measurement);
-});
 #endregion
 
 
@@ -115,11 +113,10 @@ app.MapPost("/measurements", ([FromServices] MeasurementsService repo, Measureme
 
 app.Run();
 
-// record Measurement(string id, string userId, string data, string wearableId);
-
 
 internal record Request(string origin, string message, string target);
 
+#region fakedb
 // class MeasurementRepository {
 //     private readonly List<Measurement> _measurements = new List<Measurement>();
 
@@ -134,7 +131,7 @@ internal record Request(string origin, string message, string target);
 //     public Measurement GetById(string id){
 //         return _measurements.Find(x => x.id == id);
 //     }
-   
+
 //     public List<Measurement> GetByUserId(string userId){        
 //         return _measurements.FindAll(x => x.userId == userId);       
 //     }
@@ -147,9 +144,9 @@ internal record Request(string origin, string message, string target);
 //     }
 
 // }
+#endregion
 
-
-// #region influxdb 
+#region influxdb 
 // namespace Examples
 // {
 //     public class ExamplesConnection
@@ -206,4 +203,4 @@ internal record Request(string origin, string message, string target);
 //         }
 //     }
 // }
-// #endregion
+#endregion

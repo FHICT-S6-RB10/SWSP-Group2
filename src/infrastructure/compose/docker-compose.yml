@@ -50,14 +50,24 @@ services:
     networks:
       - network-name
 
+  #MongoDB for RDS
+  rds-db:
+    image: mongo
+    container_name: rds-db
+    ports:
+      - ${RDS_DB_PORT}:27017
+    networks:
+      - network-name
+
   #Raw data service
   rds:
-    image: swspgroup2/raw-data-service
+    image: swspgroup2/raw-data-service    
     container_name: raw-data-service
     ports:
       - ${RDS_PORT}:80
     networks:
       - network-name
+
 
 
 networks:
