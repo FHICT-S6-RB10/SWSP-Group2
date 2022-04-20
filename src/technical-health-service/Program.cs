@@ -44,7 +44,7 @@ HttpClient client = new HttpClient();
 client.BaseAddress = new Uri("http://host.docker.internal:6060/");
 
 #region Websocket connection
-WatsonWsServer server = new WatsonWsServer("localhost", 6000, false);
+WatsonWsServer server = new WatsonWsServer("localhost", 6100, false);
 server.ClientConnected += (sender, args) => ClientConnected(sender, args, server, app);
 server.ClientDisconnected += ClientDisconnected;
 server.MessageReceived += MessageReceived;
@@ -73,7 +73,7 @@ static void SendServicesAndMessages(WatsonWsServer server, WebApplication app, s
 
     var logs = JsonSerializer.Serialize(logRepo.GetAll());
     var states = JsonSerializer.Serialize(stateRepo.GetAll());
-    var data = $"{{services: {states}, messages: {logs}}}";
+    var data = $"{{\"services\": {states}, \"messages\": {logs}}}";
 
     _ = server.SendAsync(address, data);
 }
