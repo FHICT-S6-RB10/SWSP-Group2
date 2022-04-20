@@ -60,25 +60,36 @@ wss.on('connection', ws => {
     ws.send(JSON.stringify(data));
 
     setInterval(() => {
-        data.messages.push({
+        const message = {
                 id: messages.length + 1,
                 level: WARNING,
                 invoked: "2022-04-14Т18:49:41.2623951+03:00",
                 origin: "Raw Data Service",
                 message: "Default data format is not set!"
-            });
+            }
 
-        ws.send(JSON.stringify(data));
+        messages.push(message);
+
+        ws.send(JSON.stringify({services: [], messages: [message]}));
     }, 3000);
 
-    setTimeout(() => {
-        data.services.push({
+    let serviceStatus = 0
+    setInterval(() => {
+        const service = {
             name: "Test Service",
-            status: ONLINE_STATUS
-        });
+            status: serviceStatus.toString()
+        }
 
-        ws.send(JSON.stringify(data));
-    }, 5000)
+        services.push(service);
+
+        ws.send(JSON.stringify({services: [service], messages: []}));
+
+        if (serviceStatus === 2) {
+            serviceStatus = 0
+        } else {
+            serviceStatus++
+        }
+    }, 3000);
 });
 
 app.get('/servicestates', (req, res) => {

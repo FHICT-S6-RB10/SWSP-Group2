@@ -13,7 +13,7 @@ export const isEqual = (value, other) => {
     const otherLength = type === '[object Array]' ? other.length : Object.keys(other).length;
     if (valueLength !== otherLength) return false;
 
-    // Compare two items
+    // Compare two inner items
     const compare = (item1, item2) => {
         // Get the item type
         const itemType = Object.prototype.toString.call(item1);
