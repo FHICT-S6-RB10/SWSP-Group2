@@ -16,6 +16,7 @@ services:
     container_name: technical-health-service
     ports:
       - ${THS_PORT}:80
+      - ${THS_WS_PORT}:80
     networks:
       - network-name
 
