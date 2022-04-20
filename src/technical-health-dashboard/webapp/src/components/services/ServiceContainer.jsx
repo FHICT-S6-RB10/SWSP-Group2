@@ -1,25 +1,12 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../../styles/services/serviceContainer.css';
 import Service from "./Service";
 import {useDispatch, useSelector} from "react-redux";
 import {saveSelectedServices} from "../../store/actions/serviceActions";
-import {isEqual} from "../../utils/equalityChecker";
 
 const ServiceContainer = () => {
     const dispatch = useDispatch();
     const {services} = useSelector(state => state.services);
-
-    const usePrevious = value => {
-        const ref = useRef();
-
-        useEffect(() => {
-            ref.current = value;
-        });
-
-        return ref.current;
-    }
-
-    const previousServices = usePrevious(services);
 
     const [styledServices, setStyledServices] = useState([]);
     const [selectedServices, setSelectedServices] = useState([]);
@@ -40,10 +27,6 @@ const ServiceContainer = () => {
         setSelectedServices(newSelection);
         dispatch(saveSelectedServices(newSelection));
     }
-
-    useEffect(() => {
-        isEqual(previousServices, services)
-    })
 
     useEffect(() => {
         setStyledServices(services.map(service => (
