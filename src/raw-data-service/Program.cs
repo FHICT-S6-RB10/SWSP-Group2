@@ -14,11 +14,10 @@ using MongoDB.Bson;
 // using InfluxDB.Client.Core;
 // using InfluxDB.Client.Writes;
 // using InfluxDB;
-// using Examples;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Services.AddSingleton<MeasurementRepository>();
+//Connection to MongoDB
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("MeasurementsDatabase"));
 builder.Services.AddSingleton<MeasurementsService>();
 
@@ -59,6 +58,7 @@ void TimerCallback(object? state)
     Console.WriteLine("Heartbeat message published");
 }
 
+//To Do: simulate message with sensor data
 // Used for testing purposes
 // app.MapGet("/publishmessage", ([FromServices] MeasurementRepository repo) =>
 // {
@@ -80,7 +80,7 @@ app.MapGet("/measurements", async ([FromServices] MeasurementsService repo) =>
         Console.WriteLine($"ID: {me.Id} DATA:{me.Data}");
     };
 });
-// Create a new measurement
+// Creates a new demo measurement for testing purposes
 app.MapPost("/measurements", async ([FromServices] MeasurementsService repo) =>
 {
     Measurement m = new Measurement();
@@ -107,14 +107,10 @@ app.MapPost("/measurements", async ([FromServices] MeasurementsService repo) =>
 // });
 #endregion
 
-
-// ExamplesConnection examples = new ExamplesConnection(); 
-// examples.DoSomething();
-
 app.Run();
 
 
-internal record Request(string origin, string message, string target);
+internal record Request(string origin, string message, string target); //used as a dto
 
 #region fakedb
 // class MeasurementRepository {
