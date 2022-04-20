@@ -1,49 +1,48 @@
 import React, {useEffect, useState} from 'react';
 import '../../styles/board/chart.css';
-import {demoMessages} from "../../demoMessages";
 import { PieChart } from 'react-minimal-pie-chart';
-import {colors, ERROR, LOG, WARNING} from "../../constants";
+import {messageColors, ERROR, LOG, WARNING} from "../../constants";
 
 const Chart = props => {
-    const {selectedServices} = props;
+    const {selectedServices, messages} = props;
 
     const [filteredMessages, setFilteredMessages] = useState([]);
     const [chartData, setChartData] = useState([]);
     const [chartLabel, setChartLabel] = useState('');
 
-    const selectedByService = serviceName => {
-        return selectedServices.indexOf(serviceName) > -1;
+    const selectedByOrigin = origin => {
+        return selectedServices.indexOf(origin) > -1;
     }
 
     useEffect(() => {
-        let messages = demoMessages;
+        let newFilteredMessages = messages;
 
         if(selectedServices.length !== 0) {
-            messages = demoMessages.filter(message => selectedByService(message.serviceName));
+            newFilteredMessages = messages.filter(message => selectedByOrigin(message.origin));
         }
 
-        setFilteredMessages(messages);
+        setFilteredMessages(newFilteredMessages);
 
-    }, [selectedServices]);
+    }, [selectedServices, messages]);
 
     useEffect(() => {
         const counts = {};
 
         filteredMessages.forEach(message => {
-            const type = message.type;
+            const level = message.level;
 
-            if (!counts[type]) {
-                counts[type] = 0;
+            if (!counts[level]) {
+                counts[level] = 0;
             }
 
-            counts[type] += 1;
+            counts[level] += 1;
         });
 
         const newChartData = Object.entries(counts).map(entry => {
-            const type = entry[0];
+            const level = entry[0];
             const value = entry[1];
 
-            return {title: type, value: value, color: colors[type]}
+            return {title: level, value: value, color: messageColors[level]}
         })
 
         setChartData(newChartData);
@@ -70,15 +69,15 @@ const Chart = props => {
                 />
             )}
             <div className='chart-title'>
-                <span className={`chart-title-${LOG}`}>
+                <span style={{color: `${messageColors[LOG]}`}}>
                     Logs
                 </span>
                 <span className='dash'>/</span>
-                <span className={`chart-title-${WARNING}`}>
+                <span style={{color: `${messageColors[WARNING]}`}}>
                     Warnings
                 </span>
                 <span className='dash'>/</span>
-                <span className={`chart-title-${ERROR}`}>
+                <span style={{color: `${messageColors[ERROR]}`}}>
                     Errors
                 </span>
             </div>

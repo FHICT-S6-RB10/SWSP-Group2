@@ -50,8 +50,7 @@ IAsyncSubscription s = c.SubscribeAsync("raw_data", h);
 Timer timer = new Timer(TimerCallback, null, 0, 20000); //executes TimerCallback every 20 seconds
 
 //Method to raise event to technical health service
-void TimerCallback(object? state)
-{
+void TimerCallback(object? state){
     var request = new Request("raw_data_service", "heartbeat", "technical_health");
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
     c.Publish("technical_health", message);

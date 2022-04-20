@@ -1,7 +1,11 @@
 # Group 2 Services
 
+![Architecture diagram](https://github.com/FHICT-S6-RB10/SWSP-Group2/blob/main/images/C2.png?raw=true)
+
 ## Event Bus
 A messaging service that connects different microservices over a channels and stores the sent messages in it's database.
+
+![Eventbus](https://github.com/FHICT-S6-RB10/SWSP-Group2/blob/main/images/Eventbus.png?raw=true)
 
 ## Sensor Data Service
 A microservice that receives the data from the sensors via the mobile app, converts it to normalized data and stores it in it's database.

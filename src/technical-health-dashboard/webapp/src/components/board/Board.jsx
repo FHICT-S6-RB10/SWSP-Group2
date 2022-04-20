@@ -7,6 +7,7 @@ import Chart from "./Chart";
 
 const Board = () => {
     const {selectedServices} = useSelector(state => state.services);
+    const {messages} = useSelector(state => state.messages);
 
     const [selectedTabs, setSelectedTabs] = useState([]);
 
@@ -14,6 +15,7 @@ const Board = () => {
         <div className="board">
             <Chart
                 selectedServices={selectedServices}
+                messages={messages}
             />
             <TabContainer
                 selectedTabs={selectedTabs}
@@ -22,6 +24,7 @@ const Board = () => {
             <MessageContainer
                 selectedTabs={selectedTabs}
                 selectedServices={selectedServices}
+                messages={messages}
             />
         </div>
     )

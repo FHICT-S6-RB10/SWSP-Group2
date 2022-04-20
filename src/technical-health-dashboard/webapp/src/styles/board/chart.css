@@ -22,15 +22,3 @@
     margin-left: 2px;
     margin-right: 2px;
 }
-
-.chart-title-LOG {
-    color: royalblue;
-}
-
-.chart-title-WARNING {
-    color: yellow;
-}
-
-.chart-title-ERROR {
-    color: red;
-}
