@@ -61,7 +61,7 @@ services:
 
   #Raw data service
   rds:
-    image: swspgroup2/raw-data-service    
+    image: local-raw-data #swspgroup2/raw-data-service
     container_name: raw-data-service
     ports:
       - ${RDS_PORT}:80
