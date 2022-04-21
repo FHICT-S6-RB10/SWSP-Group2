@@ -9,8 +9,8 @@ const serviceReducer = (state = initState, action) => {
     switch (action.type) {
         case SET_SERVICES:
             return {
+                ...state,
                 services: action.data,
-                selectedServices: action.data.map(service => service.name)
             }
         case SET_SELECTED_SERVICES:
             return {
