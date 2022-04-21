@@ -129,6 +129,7 @@ void OnHeartbeatEvent(object sender, MsgHandlerEventArgs args, WatsonWsServer se
     }
 
     if (server.ListClients().Count() > 0)
+        // To be changed
         SendServicesAndMessages(server, app, server.ListClients().First());
 }
 
