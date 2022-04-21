@@ -1,7 +1,6 @@
 import {SET_SERVICES, SET_SELECTED_SERVICES} from '../../constants';
 
 const initState = {
-    initial: true,
     services: [],
     selectedServices: [],
 }
@@ -11,7 +10,6 @@ const serviceReducer = (state = initState, action) => {
         case SET_SERVICES:
             return {
                 ...state,
-                initial: false,
                 services: action.data,
             }
         case SET_SELECTED_SERVICES:

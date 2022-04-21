@@ -1,7 +1,6 @@
 import {SET_MESSAGES} from '../../constants';
 
 const initState = {
-    initial: true,
     messages: []
 }
 
@@ -10,7 +9,6 @@ const messageReducer = (state = initState, action) => {
         case SET_MESSAGES:
             return {
                 ...state,
-                initial: false,
                 messages: action.data,
             }
         default:
