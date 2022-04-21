@@ -106,7 +106,7 @@ void UpdateStates()
             repo.Update(serviceUpdated);
             if (server.ListClients().Count() > 0)
             {
-                var data = $"{{\"services\": {JsonSerializer.Serialize(serviceUpdated)}, \"messages\": []}}";
+                var data = $"{{\"services\": [{JsonSerializer.Serialize(serviceUpdated)}], \"messages\": []}}";
                 _ = server.SendAsync(server.ListClients().First(), data);
             }
         }
@@ -132,7 +132,7 @@ void OnHeartbeatEvent(object sender, MsgHandlerEventArgs args, WatsonWsServer se
             HandleServiceState(repo, state);
             if (server.ListClients().Count() > 0)
             {
-                var data = $"{{\"services\": {JsonSerializer.Serialize(state)}, \"messages\": []}}";
+                var data = $"{{\"services\": [{JsonSerializer.Serialize(state)}], \"messages\": []}}";
                 _ = server.SendAsync(server.ListClients().First(), data);
                 UpdateStates();
             }           
@@ -157,15 +157,15 @@ void OnLoggingEvent(object sender, MsgHandlerEventArgs args, WatsonWsServer serv
 
     if (logLevel != LogLevel.UNKNOWN)
     {
-
-        var message = new LogMessage(logLevel, origin, decodedMessage, DateTime.Now);
         var repo = app.Services.GetService<ServiceLoggingRepository>();
+        int id = 1000 + repo.GetAll().Count();
+        var message = new LogMessage(id, logLevel, origin, decodedMessage, DateTime.Now);
         if (repo != null)
         {
             repo.Create(message);
             if (server.ListClients().Count() > 0)
             {
-                var data = $"{{\"services\": {JsonSerializer.Serialize(message)}, \"messages\": []}}";
+                var data = $"{{\"services\": [], \"messages\": [{JsonSerializer.Serialize(message)}]}}";
                 _ = server.SendAsync(server.ListClients().First(), data);
             }
         }
@@ -270,7 +270,7 @@ app.Run();
 #region Data Management
 internal record ServiceState(string name, ServiceStatus status, DateTime lastUpdated);
 
-internal record LogMessage(LogLevel level, string origin, string message, DateTime invoked);
+internal record LogMessage(int id, LogLevel level, string origin, string message, DateTime invoked);
 
 internal record Request(string origin, string message, string target);
 
