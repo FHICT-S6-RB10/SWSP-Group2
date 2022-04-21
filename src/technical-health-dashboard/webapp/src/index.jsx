@@ -25,8 +25,8 @@ client.onopen = () => {
 client.onmessage = message => {
     const {services: receivedServices, messages: receivedMessages} = JSON.parse(message.data);
 
-    if (receivedServices) store.dispatch(setServices(receivedServices));
-    if (receivedMessages) store.dispatch(setMessages(receivedMessages));
+    if (receivedServices && receivedServices.length > 0) store.dispatch(setServices(receivedServices));
+    if (receivedMessages && receivedMessages.length > 0) store.dispatch(setMessages(receivedMessages));
 }
 
 ReactDOM.render(
