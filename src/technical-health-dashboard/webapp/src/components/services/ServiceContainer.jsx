@@ -37,7 +37,7 @@ const ServiceContainer = () => {
                     handleClick={() => handleServiceClick(service.name)}/>
             )
         ));
-    }, [services, selectedServices])
+    }, [services, selectedServices]);
 
     return (
         <div className="service-container">

@@ -14,7 +14,7 @@ const MessageContainer = (props) => {
     }
 
     const selectedByLevel = level => {
-        return selectedTabs.indexOf(level) > -1;
+        return selectedTabs.indexOf(level.toString()) > -1;
     }
 
     useEffect(() => {
