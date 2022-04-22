@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp2
+namespace event_bus.Models
 {
-    class FailedRequest
+    internal class SuccessfulRequests
     {
         public int ID { get; set; }
         public RequestDTO RequestDTO { get; set; }

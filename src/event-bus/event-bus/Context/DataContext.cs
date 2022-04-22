@@ -3,20 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ConsoleApp2.Models;
+
+using event_bus.Models;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace ConsoleApp2
+namespace event_bus.Context
 {
-    class DataContext: DbContext
+    class DataContext : DbContext
     {
+        public DataContext(DbContextOptions<DataContext> options) :
+            base(options)
+        {
+        }
         public DbSet<FailedRequest> failedRequests { get; set; }
         public DbSet<SuccessfulRequests> successfulRequests { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=host.docker.internal,1433;Database=TransferData;User ID=SA;Password=1Secure*Password1;");
+            base.OnModelCreating(modelBuilder);
         }
+
+
     }
 }
