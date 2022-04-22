@@ -1,27 +1,30 @@
-import axios from 'axios';
-import {GET_SERVICES, SET_SELECTED_SERVICES} from "../../constants";
-import {envGet} from "../../envHelper";
+import {SET_SERVICES, SET_SELECTED_SERVICES} from "../../constants";
+import {store} from "../../index";
+import {sortServicesByName} from "../../utils/services";
 
-const SERVER_HOST = envGet('SERVER_HOST');
-const SERVER_PORT = envGet('SERVER_PORT');
+export const setServices = receivedServices => {
+    return dispatch => {
+        const {services: storedServices} = store.getState().services;
 
-export const createMockServices = () => {
-    axios.get(`${SERVER_HOST}:${SERVER_PORT}/servicestatesmock`)
-        .then(() => {
-            getServices();
-        })
-}
+        sortServicesByName(receivedServices);
 
-export const getServices = () => {
-    return async dispatch => {
-        const response = await axios.get(`${SERVER_HOST}:${SERVER_PORT}/servicestates`);
+        const newServices = [...storedServices];
 
-        dispatch({type: GET_SERVICES, data: response.data});
+        receivedServices.forEach(receivedService => {
+            const existingService = newServices.find(storedService => storedService.name === receivedService.name);
+
+            if (existingService) return existingService.status = receivedService.status
+            newServices.push(receivedService);
+        });
+
+        sortServicesByName(newServices);
+
+        return dispatch({type: SET_SERVICES, data: newServices});
     }
 }
 
-export const saveSelectedServices = serviceName => {
+export const saveSelectedServices = serviceNames => {
     return dispatch => {
-        dispatch({type: SET_SELECTED_SERVICES, data: serviceName});
+        dispatch({type: SET_SELECTED_SERVICES, data: serviceNames});
     }
 }

@@ -3,6 +3,7 @@ using NATS.Client;
 using System.Text;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using WatsonWebsocket;
 
 
 #region API Setup
@@ -13,11 +14,12 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<ServiceStateRepository>();
+builder.Services.AddSingleton<ServiceLoggingRepository>();
 builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
         builder => builder.WithOrigins("http://localhost:6060", 
             "http://localhost:3000", "http://localhost:3000/*", 
-            "http://localhost:80", "http://localhost:6060/*")));
+            "http://localhost:6000", "http://localhost:6060/*")));
 
 var app = builder.Build();
 app.UseHttpsRedirection();
@@ -39,17 +41,81 @@ opts.Url = "nats://host.docker.internal:4222";
 
 IConnection c = cf.CreateConnection(opts);
 HttpClient client = new HttpClient();
-client.BaseAddress = new Uri("http://localhost:6060/");
+client.BaseAddress = new Uri("http://host.docker.internal:6060/");
 
-// For testing purposes only
-async void AddStateAsync(ServiceState state)
+#region Websocket connection
+WatsonWsServer server = new WatsonWsServer("localhost", 6100, false);
+server.ClientConnected += (sender, args) => ClientConnected(sender, args, server, app);
+server.ClientDisconnected += ClientDisconnected;
+server.MessageReceived += MessageReceived;
+server.Start();
+
+static void ClientConnected(object sender, ClientConnectedEventArgs args, WatsonWsServer server, WebApplication app)
 {
-    HttpResponseMessage response = await client.PostAsJsonAsync(
-        "servicestates", state);
-    response.EnsureSuccessStatusCode();
+    Console.WriteLine("Client connected: " + args.IpPort);
+    SendServicesAndMessages(server, app, args.IpPort);
 }
 
-EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
+static void ClientDisconnected(object sender, ClientDisconnectedEventArgs args)
+{
+    Console.WriteLine("Client disconnected: " + args.IpPort);
+}
+
+static void MessageReceived(object sender, MessageReceivedEventArgs args)
+{
+    Console.WriteLine("Message received from " + args.IpPort + ": " + Encoding.UTF8.GetString(args.Data));
+}
+
+static void SendServicesAndMessages(WatsonWsServer server, WebApplication app, string address)
+{
+    var logRepo = app.Services.GetService<ServiceLoggingRepository>();
+    var stateRepo = app.Services.GetService<ServiceStateRepository>();
+
+    var logs = JsonSerializer.Serialize(logRepo.GetAll());
+    var states = JsonSerializer.Serialize(stateRepo.GetAll());
+    var data = $"{{\"services\": {states}, \"messages\": {logs}}}";
+
+    _ = server.SendAsync(address, data);
+}
+#endregion
+
+#region Message Handling
+void HandleServiceState(ServiceStateRepository repo, ServiceState state)
+{
+    var existing = repo.GetByName(state.name);
+
+    if (existing != null)
+        repo.Update(state);
+
+    else
+        repo.Create(state);
+}
+
+// Set the state of service to UNAVAILABLE if a hearthbeat was not recieved in time
+void UpdateStates()
+{
+    var repo = app.Services.GetService<ServiceStateRepository>();
+    var services = repo.GetAll().ToList();
+
+    foreach (ServiceState service in services)
+    {
+        var diff = DateTime.Now - service.lastUpdated;
+        if (diff.TotalSeconds > 35)
+        {
+            var serviceUpdated = new ServiceState(service.name, ServiceStatus.UNAVAILABLE, service.lastUpdated);
+            repo.Update(serviceUpdated);
+            if (server.ListClients().Count() > 0)
+            {
+                var data = $"{{\"services\": [{JsonSerializer.Serialize(serviceUpdated)}], \"messages\": []}}";
+                _ = server.SendAsync(server.ListClients().First(), data);
+            }
+        }
+    }
+}
+
+EventHandler<MsgHandlerEventArgs> heartbeatHandler = (sender, args) => OnHeartbeatEvent(sender, args, server, app);
+
+void OnHeartbeatEvent(object sender, MsgHandlerEventArgs args, WatsonWsServer server, WebApplication app)
 {
     Console.WriteLine($"Received {args.Message}");
     string receivedMessage = Encoding.UTF8.GetString(args.Message.Data);
@@ -57,45 +123,86 @@ EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
     var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
     var origin = deserializedMessage.RootElement.GetProperty("origin").ToString();
 
-    // Add service to the list 
-    if (decodedMessage.ToLower() == "hearthbeat")
+    if (decodedMessage.ToLower() == "heartbeat")
     {
-        var state = new ServiceState(origin, ServiceStatus.AVAILABLE);
-        AddStateAsync(state);
+        var state = new ServiceState(origin, ServiceStatus.AVAILABLE, DateTime.Now);
+        var repo = app.Services.GetService<ServiceStateRepository>();
+        if (repo != null)
+        {
+            HandleServiceState(repo, state);
+            if (server.ListClients().Count() > 0)
+            {
+                var data = $"{{\"services\": [{JsonSerializer.Serialize(state)}], \"messages\": []}}";
+                _ = server.SendAsync(server.ListClients().First(), data);
+                UpdateStates();
+            }           
+        }
+        else
+            Console.WriteLine("Error: couldn't find the service state repository, Program.cs - line 68");
     }
-};
+}
 
-IAsyncSubscription s = c.SubscribeAsync("technical_health", h);
-IAsyncSubscription s2 = c.SubscribeAsync("Worker","load-balancing-queue", h);
-IAsyncSubscription s1 = c.SubscribeAsync("Worker","technical_health", h);
+EventHandler<MsgHandlerEventArgs> loggingEventHandler = (sender, args) => OnLoggingEvent(sender, args, server, app);
+
+void OnLoggingEvent(object sender, MsgHandlerEventArgs args, WatsonWsServer server, WebApplication app)
+{
+    Console.WriteLine($"Received log: {args.Message}");
+    string subject = args.Message.Subject.ToString();
+    string receivedMessage = Encoding.UTF8.GetString(args.Message.Data);
+    var deserializedMessage = JsonDocument.Parse(receivedMessage);
+    var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
+    var origin = deserializedMessage.RootElement.GetProperty("origin").ToString();
+
+    var logLevel = getLogLevelFor(subject);
+
+    if (logLevel != LogLevel.UNKNOWN)
+    {
+        var repo = app.Services.GetService<ServiceLoggingRepository>();
+        int id = 1000 + repo.GetAll().Count();
+        var message = new LogMessage(id, logLevel, origin, decodedMessage, DateTime.Now);
+        if (repo != null)
+        {
+            repo.Create(message);
+            if (server.ListClients().Count() > 0)
+            {
+                var data = $"{{\"services\": [], \"messages\": [{JsonSerializer.Serialize(message)}]}}";
+                _ = server.SendAsync(server.ListClients().First(), data);
+            }
+        }
+        else
+            Console.WriteLine("Error: couldn't find the service logging repository, Program.cs - line 110");
+    }
+}
+
+LogLevel getLogLevelFor(string subject)
+{
+    switch (subject)
+    {
+        case "th_logs":
+            return LogLevel.LOG;
+        case "th_warnings":
+            return LogLevel.WARNNING;
+        case "th_errors":
+            return LogLevel.ERROR;
+        default:
+            return LogLevel.UNKNOWN;
+    }
+}
+#endregion
+
+// Event Bus subscriptions
+IAsyncSubscription s = c.SubscribeAsync("technical_health", heartbeatHandler);
+IAsyncSubscription logSubscription = c.SubscribeAsync("th_logs", loggingEventHandler);
+IAsyncSubscription warnSubscription = c.SubscribeAsync("th_warnings", loggingEventHandler);
+IAsyncSubscription errSubscription = c.SubscribeAsync("th_errors", loggingEventHandler);
 
 #region HTTP request endpoints
 app.MapGet("/servicestates", ([FromServices] ServiceStateRepository repo) =>
 {
+    UpdateStates();
     return repo.GetAll();
 })
 .WithName("GetServiceStates");
-
-// Used for testing
-app.MapGet("/servicestatesmock", ([FromServices] ServiceStateRepository repo) =>
-{
-    var state1 = new ServiceState("Authentication", ServiceStatus.AVAILABLE);
-    var state2 = new ServiceState("SensorDataStorage", ServiceStatus.HAS_ERRORS);
-    repo.Create(state1);
-    repo.Create(state2);
-    return repo.GetAll();
-})
-.WithName("GetServiceStatesMock");
-
-// Used for testing
-app.MapGet("/publishmessage", ([FromServices] ServiceStateRepository repo) =>
-{
-    var request = new Request("authentication", "hearthbeat", "technical-health-service");
-    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
-    c.Publish("technical_health", message);
-    return "Message published";
-})
-.WithName("PublishMessage");
 
 app.MapGet("/servicestates/{name}", ([FromServices] ServiceStateRepository repo, string name) =>
 {
@@ -103,6 +210,52 @@ app.MapGet("/servicestates/{name}", ([FromServices] ServiceStateRepository repo,
     return state is not null ? Results.Ok(state) : Results.NotFound();
 })
 .WithName("GetServiceStateByName");
+
+app.MapGet("/logs", ([FromServices] ServiceLoggingRepository repo) =>
+{
+    return repo.GetAll();
+})
+.WithName("GetLogs");
+
+// Used for testing
+app.MapGet("/publishmessage", ([FromServices] ServiceStateRepository repo) =>
+{
+    var request = new Request("authentication", "heartbeat", "technical-health-service");
+    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
+    c.Publish("technical_health", message);
+    return "Message published";
+})
+.WithName("PublishMessage");
+
+// Used for testing
+app.MapGet("/publishlog", ([FromServices] ServiceStateRepository repo) =>
+{
+    var request = new Request("authentication", "New user added!", "technical-health-service");
+    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
+    c.Publish("th_logs", message);
+    return "Log message published";
+})
+.WithName("PublishLogMessage");
+
+// Used for testing
+app.MapGet("/publishwarning", ([FromServices] ServiceStateRepository repo) =>
+{
+    var request = new Request("authentication", "The added user has an empty Email field!", "technical-health-service");
+    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
+    c.Publish("th_warnings", message);
+    return "Warning message published";
+})
+.WithName("PublishWarningMessage");
+
+// Used for testing
+app.MapGet("/publisherror", ([FromServices] ServiceStateRepository repo) =>
+{
+    var request = new Request("authentication", "Could not add the specified user!", "technical-health-service");
+    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
+    c.Publish("th_errors", message);
+    return "Error message published";
+})
+.WithName("PublishErrorgMessage");
 
 app.MapPost("/servicestates", ([FromServices] ServiceStateRepository repo, ServiceState state) =>
 {
@@ -115,7 +268,9 @@ app.MapPost("/servicestates", ([FromServices] ServiceStateRepository repo, Servi
 app.Run();
 
 #region Data Management
-internal record ServiceState(string name, ServiceStatus status);
+internal record ServiceState(string name, ServiceStatus status, DateTime lastUpdated);
+
+internal record LogMessage(int id, LogLevel level, string origin, string message, DateTime invoked);
 
 internal record Request(string origin, string message, string target);
 
@@ -124,6 +279,14 @@ enum ServiceStatus
     UNAVAILABLE = 0,
     AVAILABLE = 1,
     HAS_ERRORS = 2
+}
+
+enum LogLevel
+{
+    UNKNOWN = 0,
+    LOG = 1,
+    WARNNING = 2,
+    ERROR = 3
 }
 
 class ServiceStateRepository
@@ -158,6 +321,30 @@ class ServiceStateRepository
 
         int index = _services.IndexOf(existingState);
         _services[index] = state;
+    }
+}
+
+class ServiceLoggingRepository
+{
+    private readonly List<LogMessage> _logs = new List<LogMessage>();
+
+    public void Create(LogMessage logMessage)
+    {
+        if (logMessage == null)
+            return;
+
+        _logs.Add(logMessage);
+    }
+
+    public List<LogMessage> GetAll()
+    {
+        return _logs;
+    }
+
+    public List<LogMessage> GetAllWithLevel(LogLevel level)
+    {
+        var filteredList = _logs.FindAll(x => x.level == level).ToList();
+        return filteredList;
     }
 }
 #endregion
