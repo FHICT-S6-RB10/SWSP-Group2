@@ -28,6 +28,10 @@
     transition: all 0.3s;
 }
 
+.tab-icon-wrapper {
+    z-index: 2;
+}
+
 .tab-button-selected .tab-icon-wrapper {
     transform: translate(calc(100% - 26px));
 }
@@ -48,4 +52,5 @@
     padding: 5px;
     position: absolute;
     margin-left: 26px;
+    z-index: 1;
 }
