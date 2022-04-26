@@ -17,8 +17,8 @@ export const LOG = envGet("LOG_LEVEL");
 export const WARNING = envGet("WARNING_LEVEL");
 export const ERROR = envGet("ERROR_LEVEL");
 
-export const TAB_ICON = 'TAB_ICON';
-export const MESSAGE_ICON = 'MESSAGE_ICON';
+export const TAB_ICON = 'tab-icon';
+export const MESSAGE_ICON = 'message-icon';
 
 const UNKNOWN_ICON = 'fa-solid fa-circle-question';
 const LOG_ICON = 'fa-solid fa-circle-exclamation';
