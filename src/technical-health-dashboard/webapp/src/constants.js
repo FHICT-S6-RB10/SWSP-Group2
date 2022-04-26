@@ -37,6 +37,13 @@ export const serviceColors = {
     [OFFLINE]: RED
 }
 
+export const messageTitles = {
+    [UNKNOWN]: 'Unknown',
+    [LOG]: 'Log',
+    [WARNING]: 'Warning',
+    [ERROR]: 'Error'
+}
+
 export const messageColors = {
     [UNKNOWN]: WHITE,
     [LOG]: BLUE,

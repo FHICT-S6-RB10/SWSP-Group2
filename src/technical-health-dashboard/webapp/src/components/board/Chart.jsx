@@ -1,14 +1,17 @@
 import React, {useEffect, useState} from 'react';
 import '../../styles/board/chart.css';
 import { PieChart } from 'react-minimal-pie-chart';
-import {messageColors, ERROR, LOG, WARNING, UNKNOWN} from "../../constants";
+import {messageColors, UNKNOWN, messageTitles} from "../../constants";
 
 const Chart = props => {
     const {selectedServices, messages} = props;
 
     const [filteredMessages, setFilteredMessages] = useState([]);
+
     const [chartData, setChartData] = useState([]);
-    const [chartLabel, setChartLabel] = useState('');
+
+    const [counts, setCounts] = useState({});
+    const [styledCounts, setStyledCounts] = useState([]);
 
     const selectedByOrigin = origin => {
         return selectedServices.indexOf(origin) > -1;
@@ -18,6 +21,7 @@ const Chart = props => {
         let newFilteredMessages = messages;
 
         if(selectedServices.length !== 0) {
+            // If the service that the message originates from is selected
             newFilteredMessages = messages.filter(message => selectedByOrigin(message.origin));
         }
 
@@ -26,31 +30,75 @@ const Chart = props => {
     }, [selectedServices, messages]);
 
     useEffect(() => {
-        const counts = {};
+        const newCounts = {};
 
         filteredMessages.forEach(message => {
             const level = message.level;
 
-            if (!counts[level]) {
-                counts[level] = 0;
+            // If there is no previous record for this type of message create one
+            if (!newCounts[level]) {
+                newCounts[level] = 0;
             }
 
-            counts[level] += 1;
+            // For each message of a type add to this type's count
+            newCounts[level] += 1;
         });
 
-        const newChartData = Object.entries(counts).map(entry => {
+        setCounts(newCounts);
+
+        let newChartData = [];
+        Object.entries(newCounts).forEach(entry => {
             const level = entry[0];
             const value = entry[1];
 
-            return {title: level, value: value, color: messageColors[level]}
-        })
+            if (level === UNKNOWN) return;
 
+            newChartData[level] = {
+                title: messageTitles[level],
+                value: value,
+                color: messageColors[level]
+            }
+        });
+
+        newChartData = newChartData.filter(data => data);
         setChartData(newChartData);
 
-        const newChartLabel = `${counts[LOG] || 0}/${counts[WARNING] || 0}/${counts[ERROR] || 0}`;
-        setChartLabel(newChartLabel);
+        if (!newCounts[UNKNOWN]) return;
 
+        newChartData.push({
+            title: messageTitles[UNKNOWN],
+            value: newCounts[UNKNOWN],
+            color: messageColors[UNKNOWN]
+        });
+
+        setChartData(newChartData);
     }, [filteredMessages]);
+
+    useEffect(() => {
+        const newStyledCounts = [];
+
+        Object.keys(counts).forEach(level => {
+            if (level === UNKNOWN) return;
+            const plural = !counts[level] || counts[level] !== 1;
+
+            newStyledCounts[level] =
+                <span style={{color: `${messageColors[level]}`}} key={level}>
+                    {counts[level] || 0} {messageTitles[level]}{plural && 's'}
+                </span>;
+        });
+
+        setStyledCounts(newStyledCounts);
+
+        if (!counts[UNKNOWN]) return;
+
+        newStyledCounts.push(
+            <span style={{color: `${messageColors[UNKNOWN]}`}} key={UNKNOWN}>
+                {counts[UNKNOWN] || 0} {messageTitles[UNKNOWN]}
+            </span>
+        );
+
+        setStyledCounts(newStyledCounts);
+    }, [counts]);
 
     return (
         <div className="chart">
@@ -59,32 +107,12 @@ const Chart = props => {
                     radius={50}
                     animate={true}
                     data={chartData}
-                    label={() => chartLabel}
-                    lineWidth={15}
-                    labelStyle={{
-                        fontSize: '16px',
-                        fill: 'black'
-                    }}
-                    labelPosition={0}
+                    lineWidth={20}
                     startAngle={270}
                 />
             )}
             <div className='chart-title'>
-                <span style={{color: `${messageColors[UNKNOWN]}`}}>
-                    Unknown
-                </span>
-                <span className='dash'>/</span>
-                <span style={{color: `${messageColors[LOG]}`}}>
-                    Logs
-                </span>
-                <span className='dash'>/</span>
-                <span style={{color: `${messageColors[WARNING]}`}}>
-                    Warnings
-                </span>
-                <span className='dash'>/</span>
-                <span style={{color: `${messageColors[ERROR]}`}}>
-                    Errors
-                </span>
+                {styledCounts}
             </div>
         </div>
     )

@@ -5,6 +5,10 @@ import MessageIcon from "../MessageIcon";
 import {ERROR, LOG, TAB_ICON, UNKNOWN, WARNING} from "../../../constants";
 
 const tabs = {
+    [UNKNOWN]: {
+        title: "Unknown",
+        icon: <MessageIcon level={UNKNOWN} usedIn={TAB_ICON}/>
+    },
     [LOG]: {
         title: "Logs",
         icon: <MessageIcon level={LOG} usedIn={TAB_ICON}/>
@@ -16,10 +20,6 @@ const tabs = {
     [ERROR]: {
         title: "Errors",
         icon: <MessageIcon level={ERROR} usedIn={TAB_ICON}/>
-    },
-    [UNKNOWN]: {
-        title: "Unknown",
-        icon: <MessageIcon level={UNKNOWN} usedIn={TAB_ICON}/>
     }
 }
 
