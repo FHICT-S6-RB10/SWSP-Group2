@@ -17,12 +17,15 @@ export const LOG = envGet("LOG_LEVEL");
 export const WARNING = envGet("WARNING_LEVEL");
 export const ERROR = envGet("ERROR_LEVEL");
 
+export const TAB_ICON = 'TAB_ICON';
+export const MESSAGE_ICON = 'MESSAGE_ICON';
+
 const UNKNOWN_ICON = 'fa-solid fa-circle-question';
-const LOG_ICON = 'fa-solid fa-triangle-exclamation';
-const WARNING_ICON = 'fa-solid fa-circle-exclamation';
+const LOG_ICON = 'fa-solid fa-circle-exclamation';
+const WARNING_ICON = 'fa-solid fa-triangle-exclamation';
 const ERROR_ICON = 'fa-solid fa-circle-info'
 
-const GREEN = 'green';
+const GREEN = 'limegreen';
 const RED = 'red';
 const YELLOW = 'yellow';
 const WHITE = 'white';

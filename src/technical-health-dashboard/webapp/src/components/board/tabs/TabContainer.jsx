@@ -2,24 +2,24 @@ import React from 'react';
 import '../../../styles/board/tabs/tabContainer.css';
 import TabButton from "./TabButton";
 import MessageIcon from "../MessageIcon";
-import {ERROR, LOG, UNKNOWN, WARNING} from "../../../constants";
+import {ERROR, LOG, TAB_ICON, UNKNOWN, WARNING} from "../../../constants";
 
 const tabs = {
     [LOG]: {
         title: "Logs",
-        icon: <MessageIcon level={LOG}/>
+        icon: <MessageIcon level={LOG} usedIn={TAB_ICON}/>
     },
     [WARNING]: {
         title: "Warnings",
-        icon: <MessageIcon level={WARNING}/>
+        icon: <MessageIcon level={WARNING} usedIn={TAB_ICON}/>
     },
     [ERROR]: {
         title: "Errors",
-        icon: <MessageIcon level={ERROR}/>
+        icon: <MessageIcon level={ERROR} usedIn={TAB_ICON}/>
     },
     [UNKNOWN]: {
         title: "Unknown",
-        icon: <MessageIcon level={UNKNOWN}/>
+        icon: <MessageIcon level={UNKNOWN} usedIn={TAB_ICON}/>
     }
 }
 

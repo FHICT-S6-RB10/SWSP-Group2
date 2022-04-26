@@ -1,9 +1,16 @@
 .tab-button {
     border-radius: 5px;
-    border: 1px solid black;
-    padding: 5px 0;
     margin-right: 5px;
     cursor: pointer;
+    border: 1px solid black;
+    transition: all 0.3s;
+    position: relative;
+    width: 110px;
+    height: 29px;
+}
+
+.short {
+    width: 80px;
 }
 
 .tab-button:last-child {
@@ -11,16 +18,34 @@
 }
 
 .tab-button-selected {
-    background-color: black;
-    color: white;
+    background-color: limegreen;
 }
 
-.tab-button-icon {
-    background-color: black;
-    border-radius: 4px 0 0 4px;
-    padding: 5px;
+.tab-icon-wrapper, .tab-title-wrapper {
+    display: inline-block;
+    position: absolute;
+    width: 100%;
+    transition: all 0.3s;
 }
 
-.tab-button-title {
+.tab-button-selected .tab-icon-wrapper {
+    transform: translate(calc(100% - 26px));
+}
+
+.tab-button-selected .tab-title-wrapper {
+    transform: translate(-26px);
+}
+
+.tab-icon {
+    display: inline-block;
+    background-color: black;
+    border-radius: 4px;
     padding: 5px;
+    position: absolute;
+}
+
+.tab-title {
+    padding: 5px;
+    position: absolute;
+    margin-left: 26px;
 }

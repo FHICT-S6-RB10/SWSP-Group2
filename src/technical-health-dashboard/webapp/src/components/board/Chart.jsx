@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import '../../styles/board/chart.css';
 import { PieChart } from 'react-minimal-pie-chart';
-import {messageColors, ERROR, LOG, WARNING} from "../../constants";
+import {messageColors, ERROR, LOG, WARNING, UNKNOWN} from "../../constants";
 
 const Chart = props => {
     const {selectedServices, messages} = props;
@@ -66,9 +66,14 @@ const Chart = props => {
                         fill: 'black'
                     }}
                     labelPosition={0}
+                    startAngle={270}
                 />
             )}
             <div className='chart-title'>
+                <span style={{color: `${messageColors[UNKNOWN]}`}}>
+                    Unknown
+                </span>
+                <span className='dash'>/</span>
                 <span style={{color: `${messageColors[LOG]}`}}>
                     Logs
                 </span>
