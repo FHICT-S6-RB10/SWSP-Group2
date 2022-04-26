@@ -2,26 +2,29 @@ import React from 'react';
 import '../../../styles/board/tabs/tabContainer.css';
 import TabButton from "./TabButton";
 import MessageIcon from "../MessageIcon";
-import {ERROR, LOG, TAB_ICON, UNKNOWN, WARNING} from "../../../constants";
+import {messageTitles, TAB_ICON, UNKNOWN} from "../../../constants";
 
-const tabs = {
-    [UNKNOWN]: {
-        title: "Unknown",
-        icon: <MessageIcon level={UNKNOWN} usedIn={TAB_ICON}/>
-    },
-    [LOG]: {
-        title: "Logs",
-        icon: <MessageIcon level={LOG} usedIn={TAB_ICON}/>
-    },
-    [WARNING]: {
-        title: "Warnings",
-        icon: <MessageIcon level={WARNING} usedIn={TAB_ICON}/>
-    },
-    [ERROR]: {
-        title: "Errors",
-        icon: <MessageIcon level={ERROR} usedIn={TAB_ICON}/>
+let tabs = [];
+
+Object.entries(messageTitles).forEach(entry => {
+    const level = entry[0];
+    const title = `${entry[1]}s`;
+
+    if (level === UNKNOWN) return;
+    tabs[level] = {
+        title,
+        type: level,
+        icon: <MessageIcon level={level} usedIn={TAB_ICON}/>
     }
-}
+});
+
+tabs.push({
+    title: messageTitles[UNKNOWN],
+    type: UNKNOWN,
+    icon: <MessageIcon level={UNKNOWN} usedIn={TAB_ICON}/>
+});
+
+tabs = tabs.filter(tab => tab);
 
 const TabContainer = props => {
     const {selectedTabs, setSelectedTabs} = props;
@@ -38,14 +41,19 @@ const TabContainer = props => {
         }
     }
 
-    const styledTabs = Object.keys(tabs).map(key => (
-            <TabButton
-                key={key}
-                handleClick={() => handleTabClick(key)}
-                isSelected={isSelected(key)}
-                tabInfo={tabs[key]}
-            />
-        )
+    const styledTabs = Object.entries(tabs).map(entry => {
+        const key = entry[0]
+        const tabInfo = entry[1];
+        const {type} = tabInfo;
+        return (
+                <TabButton
+                    key={key}
+                    handleClick={() => handleTabClick(type)}
+                    isSelected={isSelected(type)}
+                    tabInfo={tabInfo}
+                />
+            )
+        }
     );
 
     return (
