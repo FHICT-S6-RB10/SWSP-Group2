@@ -29,7 +29,7 @@ const GREEN = 'limegreen';
 const RED = 'red';
 const YELLOW = 'yellow';
 const WHITE = 'white';
-const BLUE = 'royalblue';
+const BLUE = 'rgb(48, 148, 255)';
 
 export const serviceColors = {
     [ONLINE]: GREEN,
