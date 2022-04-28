@@ -49,7 +49,6 @@ app.MapPost("/measurements/", async (Measurement measurement) => {
     }
 
     return Results.Created($"/measurements/{measurement.patientId}", measurement);
-
 });
 
 app.Run();
