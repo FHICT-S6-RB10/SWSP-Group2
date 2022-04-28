@@ -13,7 +13,9 @@ const TabButton = props => {
                 {icon}
             </div>
             <div className='tab-title-wrapper'>
-                <span className="tab-title">{title}</span>
+                <span className="tab-title">
+                    {title}
+                </span>
             </div>
         </div>
     )

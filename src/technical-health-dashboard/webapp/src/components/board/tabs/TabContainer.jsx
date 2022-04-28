@@ -2,29 +2,18 @@ import React from 'react';
 import '../../../styles/board/tabs/tabContainer.css';
 import TabButton from "./TabButton";
 import MessageIcon from "../MessageIcon";
-import {messageTitles, TAB_ICON, UNKNOWN} from "../../../constants";
+import {messageTitles, TAB_ICON} from "../../../constants";
 
-let tabs = [];
-
-Object.entries(messageTitles).forEach(entry => {
+const tabs = Object.entries(messageTitles).map(entry => {
     const level = entry[0];
     const title = `${entry[1]}s`;
 
-    if (level === UNKNOWN) return;
-    tabs[level] = {
+    return {
         title,
         type: level,
         icon: <MessageIcon level={level} usedIn={TAB_ICON}/>
     }
 });
-
-tabs.push({
-    title: messageTitles[UNKNOWN],
-    type: UNKNOWN,
-    icon: <MessageIcon level={UNKNOWN} usedIn={TAB_ICON}/>
-});
-
-tabs = tabs.filter(tab => tab);
 
 const TabContainer = props => {
     const {selectedTabs, setSelectedTabs} = props;
@@ -41,16 +30,14 @@ const TabContainer = props => {
         }
     }
 
-    const styledTabs = Object.entries(tabs).map(entry => {
-        const key = entry[0]
-        const tabInfo = entry[1];
-        const {type} = tabInfo;
+    const styledTabs = tabs.map(tab => {
+        const {type} = tab;
         return (
                 <TabButton
-                    key={key}
+                    key={type}
                     handleClick={() => handleTabClick(type)}
                     isSelected={isSelected(type)}
-                    tabInfo={tabInfo}
+                    tabInfo={tab}
                 />
             )
         }

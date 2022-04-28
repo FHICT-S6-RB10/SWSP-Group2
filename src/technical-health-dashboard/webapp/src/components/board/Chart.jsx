@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import '../../styles/board/chart.css';
 import { PieChart } from 'react-minimal-pie-chart';
-import {messageColors, UNKNOWN, messageTitles} from "../../constants";
+import {messageColors, messageTitles} from "../../constants";
 
 const Chart = props => {
     const {selectedServices, messages} = props;
@@ -46,56 +46,32 @@ const Chart = props => {
 
         setCounts(newCounts);
 
-        let newChartData = [];
-        Object.entries(newCounts).forEach(entry => {
+        // Update chart data based on new messages
+        const newChartData = Object.entries(newCounts).map(entry => {
             const level = entry[0];
             const value = entry[1];
 
-            if (level === UNKNOWN) return;
-
-            newChartData[level] = {
-                title: messageTitles[level],
-                value: value,
+            return {
+                value,
+                title: `${messageTitles[level]}s`,
                 color: messageColors[level]
             }
-        });
-
-        newChartData = newChartData.filter(data => data);
-        setChartData(newChartData);
-
-        if (!newCounts[UNKNOWN]) return;
-
-        newChartData.push({
-            title: messageTitles[UNKNOWN],
-            value: newCounts[UNKNOWN],
-            color: messageColors[UNKNOWN]
         });
 
         setChartData(newChartData);
     }, [filteredMessages]);
 
     useEffect(() => {
-        const newStyledCounts = [];
+        const newStyledCounts = Object.entries(counts).map(entry => {
+            const level = entry[0];
+            const count = entry[1];
 
-        Object.keys(counts).forEach(level => {
-            if (level === UNKNOWN) return;
-            const plural = !counts[level] || counts[level] !== 1;
-
-            newStyledCounts[level] =
+            return (
                 <span style={{color: `${messageColors[level]}`}} key={level}>
-                    {counts[level] || 0} {messageTitles[level]}{plural && 's'}
-                </span>;
+                    {count} {messageTitles[level]}{count !== 1 && 's'}
+                </span>
+            )
         });
-
-        setStyledCounts(newStyledCounts);
-
-        if (!counts[UNKNOWN]) return;
-
-        newStyledCounts.push(
-            <span style={{color: `${messageColors[UNKNOWN]}`}} key={UNKNOWN}>
-                {counts[UNKNOWN] || 0} {messageTitles[UNKNOWN]}
-            </span>
-        );
 
         setStyledCounts(newStyledCounts);
     }, [counts]);
