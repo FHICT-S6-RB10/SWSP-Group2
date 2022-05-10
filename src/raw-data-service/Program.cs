@@ -10,6 +10,7 @@ using Raw_Data_Service.Services;
 using MongoDB.Bson;
 using Newtonsoft.Json.Linq;
 using MongoDB.Bson.Serialization;
+// using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,21 +37,27 @@ EventHandler<MsgHandlerEventArgs> h = async (sender, args) =>
     JObject json = JObject.Parse(decodedMessage);
 
     var repo = app.Services.GetService<MeasurementsService>();
-    Console.WriteLine("Repo should be :" + repo);
     Measurement m = new Measurement();
-    m.Data = json.ToBsonDocument();
-    // var bsonDocument = BsonSerializer.Deserialize<BsonDocument[]>(m.Data);
-    Console.WriteLine("BSON :" + m.Data);
-    Console.WriteLine("JSON :" + json);
-    // Console.WriteLine("BSON DOCUMENT :" + bsonDocument);
+    foreach (JProperty property in json.Properties())
+    {
+        if((property.Name).ToString().ToLower() == "patientid"){
+            m.PatientId = property.Value.ToString();
+            continue;
+        }
+        if((property.Name).ToString().ToLower() == "wearableid"){
+            m.WearableId = property.Value.ToString();
+            continue;
+        }
+
+        var jsonData = property.Value;
+
+        BsonDocument doc = BsonDocument.Parse(jsonData.ToString());
+
+        m.Data = doc;
+    }
 
     await repo.CreateAsync(m);
 
-    Console.WriteLine("I think it worked");
-    // Console.WriteLine("MESSAGE: " + decodedMessage);
-    // foreach(var item in json){
-    //     Console.WriteLine("ITEM: " + item);
-    // }    
 };
 
 IAsyncSubscription s = c.SubscribeAsync("measurement:created", h);
@@ -58,23 +65,52 @@ IAsyncSubscription s = c.SubscribeAsync("measurement:created", h);
 Timer timer = new Timer(TimerCallback, null, 0, 20000); //executes TimerCallback every 20 seconds
 
 //Method to raise event to technical health service
-void TimerCallback(object? state){
+void TimerCallback(object? state)
+{
     var request = new Request("raw_data_service", "heartbeat", "technical_health");
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
     c.Publish("technical_health", message);
     Console.WriteLine("Heartbeat message published");
 }
 
-//To Do: simulate message with sensor data
 // Used for testing purposes
-app.MapGet("/publishmessage", async () =>
+app.MapGet("/publishheart", async () =>
 {
-    var jsonData = new 
+    var jsonData = new
     {
-        heartRate = new {average = 81.5, rrData = 710}
+        patientId = "13g1f1qd3asd",
+        wearableId = "04141da341",
+        jsonContent = new
+        {
+            Timestamp = "21/02/2022 18:49:47",
+            Heart = 83,
+            Interval = 726,
+            RMSSD = 32.95,
+            Event = "None"
+        }
     };
     string json = JsonSerializer.Serialize(jsonData);
-    Console.WriteLine("JsonData= "+ json);
+    // Console.WriteLine("JsonData= " + json);
+    var request = new Request("raw_data_service", json, "measurement:created");
+    var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
+    c.Publish("measurement:created", message);
+    Console.WriteLine("New measurement published");
+});
+
+app.MapGet("/publishskin", async () =>
+{
+    int[] records = {185,184,1825,1825,182,1825,1825,1825,182,1815,1805,1795,1795,1795,1795,1795};
+    var jsonData = new
+    {
+        patientId = "13g1f1qd3asd",
+        wearableId = "04141da341",
+        jsonContent = new
+        {
+            Frequency= "16hz",
+            Records = records
+        }
+    };
+    string json = JsonSerializer.Serialize(jsonData);
     var request = new Request("raw_data_service", json, "measurement:created");
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
     c.Publish("measurement:created", message);
@@ -97,13 +133,13 @@ app.MapGet("/measurements", async ([FromServices] MeasurementsService repo) =>
 app.MapPost("/measurements", async ([FromServices] MeasurementsService repo) =>
 {
     Measurement m = new Measurement();
-    m.Data = new {heartRate = new {average = 69, rrData = 681}}.ToBsonDocument();
-//     m.Data = new BsonDocument{
-//     {"heartRate", new BsonDocument {
-//        {"average", 82.5 },
-//        {"rrData", 710}
-//     }}
-// };
+    m.Data = new { heartRate = new { average = 69, rrData = 681 } }.ToBsonDocument();
+    //     m.Data = new BsonDocument{
+    //     {"heartRate", new BsonDocument {
+    //        {"average", 82.5 },
+    //        {"rrData", 710}
+    //     }}
+    // };
     await repo.CreateAsync(m);
     return ($"{m} should be created");
 });
@@ -113,11 +149,3 @@ app.Run();
 
 internal record Request(string origin, string message, string target); //used as a dto for event bus
 
-// public class NewMeasurementEventController : Controller{
-//     private readonly MeasurementsService _repo;
-
-//     public NewMeasurementEventController(Measurement repo){
-//         _repo = repo;
-//     }
-
-// }
