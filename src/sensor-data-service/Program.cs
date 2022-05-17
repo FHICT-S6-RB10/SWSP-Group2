@@ -17,11 +17,11 @@ var app = builder.Build();
 //app.UseStaticFiles();
 //app.UseRouting();
 
-//ConnectionFactory cf = new ConnectionFactory();
-//Options opts = ConnectionFactory.GetDefaultOptions();
-//opts.Url = "nats://host.docker.internal:4222";
+ConnectionFactory cf = new ConnectionFactory();
+Options opts = ConnectionFactory.GetDefaultOptions();
+opts.Url = "nats://host.docker.internal:4222";
 
-//IConnection c = cf.CreateConnection(opts);
+IConnection c = cf.CreateConnection(opts);
 
 //EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
 //{
@@ -49,7 +49,7 @@ void TimerCallback(object? state)
 {
     var request = new Request("sensor_data_service", "technical_health", "heartbeat");
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
-    //c.Publish("technical_health", message);
+    c.Publish("technical_health", message);
     Console.WriteLine("Message techincal-health-service");
 }
 
@@ -81,7 +81,7 @@ app.MapPost("/measurements/SkinConductance", async (SkinConductance skinConducta
     }
 
     //send message on event bus
-    var request = new SkinConductanceData("sensor_data_service", "raw-data-service", skinConductance);
+    var request = new SkinConductanceData("sensor_data_service", "measurement:created", skinConductance);
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
     Console.WriteLine(Encoding.UTF8.GetString(message));
     //c.Publish("normalized-data", message);
@@ -102,10 +102,10 @@ app.MapPost("/measurements/RR", async (RR rr) =>
     {
         //message on event bus
         Console.WriteLine(" normal RR");
-        var request = new RRData("sensor_data_service", "raw-data-service", rr);
+        var request = new RRData("sensor_data_service", "measurement:created", rr);
         var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
         Console.WriteLine(Encoding.UTF8.GetString(message));
-        //c.Publish("normalized-data", message);
+        c.Publish("normalized-data", message);
     }
     else
     {
