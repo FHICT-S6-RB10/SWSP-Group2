@@ -201,12 +201,14 @@ public class RR
 {
     public string patientId { get; set; }
     public string wearableId { get; set; }
+    public string timestamp { get; set; }
     public double[] records { get; set; }
 
-    public RR(string patientId, string wearableId, double[] records)
+    public RR(string patientId, string wearableId, string timestamp, double[] records)
     {
         this.patientId = patientId;
         this.wearableId = wearableId;
+        this.timestamp= timestamp;
         this.records = records;
     }
 
