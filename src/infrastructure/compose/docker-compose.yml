@@ -12,11 +12,11 @@ services:
 
   #Technical Health Service
   ths:
-    image: swspgroup2/technical-health-service
+    image: technical-health-demo
     container_name: technical-health-service
     ports:
       - ${THS_PORT}:80
-      - ${THS_WS_PORT}:80
+      - ${THS_WS_PORT}:9600
     networks:
       - network-name
 

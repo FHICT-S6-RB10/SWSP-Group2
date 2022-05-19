@@ -17,9 +17,9 @@ builder.Services.AddSingleton<ServiceStateRepository>();
 builder.Services.AddSingleton<ServiceLoggingRepository>();
 builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
-        builder => builder.WithOrigins("http://localhost:6060", 
+        builder => builder.WithOrigins("http://localhost:9060", 
             "http://localhost:3000", "http://localhost:3000/*", 
-            "http://localhost:6000", "http://localhost:6060/*")));
+            "http://localhost:9600", "http://localhost:9060/*")));
 
 var app = builder.Build();
 app.UseHttpsRedirection();
@@ -41,14 +41,17 @@ opts.Url = "nats://host.docker.internal:4222";
 
 IConnection c = cf.CreateConnection(opts);
 HttpClient client = new HttpClient();
-client.BaseAddress = new Uri("http://host.docker.internal:6060/");
+client.BaseAddress = new Uri("http://host.docker.internal:9060/");
 
 #region Websocket connection
-WatsonWsServer server = new WatsonWsServer("localhost", 6100, false);
+var uri = new Uri("http://localhost:9600/");
+WatsonWsServer server = new WatsonWsServer(uri);
 server.ClientConnected += (sender, args) => ClientConnected(sender, args, server, app);
 server.ClientDisconnected += ClientDisconnected;
 server.MessageReceived += MessageReceived;
 server.Start();
+
+Console.WriteLine(server.ToString());
 
 static void ClientConnected(object sender, ClientConnectedEventArgs args, WatsonWsServer server, WebApplication app)
 {
@@ -203,6 +206,16 @@ app.MapGet("/servicestates", ([FromServices] ServiceStateRepository repo) =>
     return repo.GetAll();
 })
 .WithName("GetServiceStates");
+
+app.MapGet("/websocket", ([FromServices] ServiceStateRepository repo) =>
+{
+    WatsonWsClient wsClient = new WatsonWsClient("localhost", 9600, false);
+    wsClient.Start();
+
+    wsClient.SendAsync("Hi");
+    return "Sent Hi!";
+})
+.WithName("SendHi");
 
 app.MapGet("/servicestates/{name}", ([FromServices] ServiceStateRepository repo, string name) =>
 {
