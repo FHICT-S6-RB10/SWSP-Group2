@@ -2,26 +2,18 @@ import React from 'react';
 import '../../../styles/board/tabs/tabContainer.css';
 import TabButton from "./TabButton";
 import MessageIcon from "../MessageIcon";
-import {ERROR, LOG, UNKNOWN, WARNING} from "../../../constants";
+import {messageTitles, TAB_ICON} from "../../../constants";
 
-const tabs = {
-    [LOG]: {
-        title: "Logs",
-        icon: <MessageIcon level={LOG}/>
-    },
-    [WARNING]: {
-        title: "Warnings",
-        icon: <MessageIcon level={WARNING}/>
-    },
-    [ERROR]: {
-        title: "Errors",
-        icon: <MessageIcon level={ERROR}/>
-    },
-    [UNKNOWN]: {
-        title: "Unknown",
-        icon: <MessageIcon level={UNKNOWN}/>
+const tabs = Object.entries(messageTitles).map(entry => {
+    const level = entry[0];
+    const title = `${entry[1]}s`;
+
+    return {
+        title,
+        type: level,
+        icon: <MessageIcon level={level} usedIn={TAB_ICON}/>
     }
-}
+});
 
 const TabContainer = props => {
     const {selectedTabs, setSelectedTabs} = props;
@@ -38,14 +30,17 @@ const TabContainer = props => {
         }
     }
 
-    const styledTabs = Object.keys(tabs).map(key => (
-            <TabButton
-                key={key}
-                handleClick={() => handleTabClick(key)}
-                isSelected={isSelected(key)}
-                tabInfo={tabs[key]}
-            />
-        )
+    const styledTabs = tabs.map(tab => {
+        const {type} = tab;
+        return (
+                <TabButton
+                    key={type}
+                    handleClick={() => handleTabClick(type)}
+                    isSelected={isSelected(type)}
+                    tabInfo={tab}
+                />
+            )
+        }
     );
 
     return (

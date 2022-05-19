@@ -12,21 +12,21 @@ const OFFLINE = envGet("OFFLINE_STATUS");
 const ONLINE = envGet("ONLINE_STATUS");
 const HAS_ERRORS = envGet("HAS_ERRORS_STATUS");
 
-export const UNKNOWN = envGet("UNKNOWN_LEVEL");
 export const LOG = envGet("LOG_LEVEL");
 export const WARNING = envGet("WARNING_LEVEL");
 export const ERROR = envGet("ERROR_LEVEL");
 
-const UNKNOWN_ICON = 'fa-solid fa-circle-question';
-const LOG_ICON = 'fa-solid fa-triangle-exclamation';
-const WARNING_ICON = 'fa-solid fa-circle-exclamation';
+export const TAB_ICON = 'tab-icon';
+export const MESSAGE_ICON = 'message-icon';
+
+const LOG_ICON = 'fa-solid fa-circle-exclamation';
+const WARNING_ICON = 'fa-solid fa-triangle-exclamation';
 const ERROR_ICON = 'fa-solid fa-circle-info'
 
-const GREEN = 'green';
+const GREEN = 'limegreen';
 const RED = 'red';
 const YELLOW = 'yellow';
-const WHITE = 'white';
-const BLUE = 'royalblue';
+const BLUE = 'rgb(48, 148, 255)';
 
 export const serviceColors = {
     [ONLINE]: GREEN,
@@ -34,15 +34,19 @@ export const serviceColors = {
     [OFFLINE]: RED
 }
 
+export const messageTitles = {
+    [LOG]: 'Log',
+    [WARNING]: 'Warning',
+    [ERROR]: 'Error'
+}
+
 export const messageColors = {
-    [UNKNOWN]: WHITE,
     [LOG]: BLUE,
     [WARNING]: YELLOW,
     [ERROR]: RED
 }
 
 export const messageIcons = {
-    [UNKNOWN]: UNKNOWN_ICON,
     [LOG]: LOG_ICON,
     [WARNING]: WARNING_ICON,
     [ERROR]: ERROR_ICON
