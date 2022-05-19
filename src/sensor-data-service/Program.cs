@@ -156,13 +156,14 @@ public class SkinConductance
 
     public List<double> NormalizeFrequency(double[] records, int frequency)
     {
+        int freq = frequency / 4;
         List<double> normalizedArr = new List<double>();
-        for (int i = 0; i < records.Length; i += frequency)
+        for (int i = 0; i < records.Length; i += freq)
         {
-            if (i + frequency >= records.Length)
-                frequency = records.Length - i;
-            double[] subArray = new double[frequency];
-            Array.Copy(records, i, subArray, 0, frequency);
+            if (i + freq >= records.Length)
+                freq = records.Length - i;
+            double[] subArray = new double[freq];
+            Array.Copy(records, i, subArray, 0, freq);
             normalizedArr.Add(subArray.Average());
         }
         return normalizedArr;
