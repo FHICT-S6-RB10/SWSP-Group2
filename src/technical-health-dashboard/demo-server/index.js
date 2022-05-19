@@ -11,7 +11,6 @@ const {
     CLIENT_URL,
     CLIENT_PORT,
     PORT,
-    UNKNOWN,
     LOG,
     WARNING,
     ERROR
@@ -39,7 +38,7 @@ const messages = [
     {id: 5, level: parseInt(ERROR), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Not receiving heartbeat!"},
 
     {id: 6, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
-    {id: 7, level: parseInt(UNKNOWN), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
+    {id: 7, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
     {id: 8, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Processing takes longer than expected!"},
     {id: 9, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
     {id: 10, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
@@ -75,10 +74,10 @@ wss.on('connection', ws => {
     }, 3000);
 
     let messageId = messages.length;
-    let messageLevel = 0;
+    let messageLevel = 1;
     setInterval(() => {
         if (messageLevel === 3) {
-            messageLevel = 0
+            messageLevel = 1
         } else {
             messageLevel++
         }

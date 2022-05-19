@@ -10,6 +10,10 @@ namespace Raw_Data_Service.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
 
+        public string PatientId { get; set; }
+
+        public string WearableId { get; set; }
+
         public BsonDocument Data { get; set; }
     }
 }

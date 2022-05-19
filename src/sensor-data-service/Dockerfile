@@ -7,10 +7,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["sensor-data-service/sensor-data-service.csproj", "sensor-data-service/"]
-RUN dotnet restore "sensor-data-service/sensor-data-service.csproj"
+COPY ["sensor-data-service.csproj", "."]
+RUN dotnet restore "./sensor-data-service.csproj"
 COPY . .
-WORKDIR "/src/sensor-data-service"
+WORKDIR "/src/."
 RUN dotnet build "sensor-data-service.csproj" -c Release -o /app/build
 
 FROM build AS publish

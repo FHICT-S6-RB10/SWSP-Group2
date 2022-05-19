@@ -7,6 +7,7 @@
     border-radius: 5px;
     padding: 5px;
     border: 1px solid white;
+    transition: all 0.3s;
 }
 
 .service-selected {
