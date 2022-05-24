@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react';
 import '../../styles/board/chart.css';
 import { PieChart } from 'react-minimal-pie-chart';
 import {messageColors, messageTitles} from "../../constants";
+import ReactTooltip from "react-tooltip";
 
 const Chart = props => {
     const {selectedServices, messages} = props;
@@ -9,6 +10,7 @@ const Chart = props => {
     const [filteredMessages, setFilteredMessages] = useState([]);
 
     const [chartData, setChartData] = useState([]);
+    const [hovered, setHovered] = useState(null);
 
     const [counts, setCounts] = useState({});
     const [styledCounts, setStyledCounts] = useState([]);
@@ -53,8 +55,8 @@ const Chart = props => {
 
             return {
                 value,
-                title: `${messageTitles[level]}s`,
-                color: messageColors[level]
+                color: messageColors[level],
+                name: messageTitles[level]
             }
         });
 
@@ -76,20 +78,39 @@ const Chart = props => {
         setStyledCounts(newStyledCounts);
     }, [counts]);
 
+    const getTooltip = entry => {
+        return `${entry.name}s`;
+    }
+
     return (
-        <div className="chart">
+        <div className="chart-container">
             {chartData.length > 0 && (
-                <PieChart
-                    radius={50}
-                    animate={true}
-                    data={chartData}
-                    lineWidth={20}
-                    startAngle={270}
-                />
+                <div data-tip="" data-for="chart">
+                    <PieChart
+                        radius={50}
+                        animate={true}
+                        data={chartData}
+                        lineWidth={20}
+                        startAngle={270}
+                        onMouseOver={(_, index) => {
+                            setHovered(index);
+                        }}
+                        onMouseOut={() => {
+                            setHovered(null);
+                        }}
+                    />
+                    <ReactTooltip
+                        id="chart"
+                        getContent={() =>
+                            typeof hovered === 'number' ? getTooltip(chartData[hovered]) : null
+                        }
+                    />
+                </div>
             )}
             <div className='chart-title'>
                 {styledCounts}
             </div>
+            <ReactTooltip/>
         </div>
     )
 }
