@@ -57,43 +57,43 @@ wss.on('connection', ws => {
 
     ws.send(JSON.stringify({services, messages}));
 
-    let serviceStatus = 0
-    setInterval(() => {
-        if (serviceStatus === 2) {
-            serviceStatus = 0
-        } else {
-            serviceStatus++
-        }
-
-        const testService = {
-            name: "Test Service",
-            status: serviceStatus
-        }
-
-        ws.send(JSON.stringify({services: [testService], messages: []}));
-    }, 3000);
-
-    let messageId = messages.length;
-    let messageLevel = 1;
-    setInterval(() => {
-        if (messageLevel === 3) {
-            messageLevel = 1
-        } else {
-            messageLevel++
-        }
-
-        messageId++;
-
-        const testMessage = {
-            id: messageId,
-            level: messageLevel,
-            invoked: "2022-04-14Т18:49:41.2623951+03:00",
-            origin: "Test Service",
-            message: "Random message."
-        }
-
-        ws.send(JSON.stringify({services: [], messages: [testMessage]}));
-    }, 4000);
+    // let serviceStatus = 0
+    // setInterval(() => {
+    //     if (serviceStatus === 2) {
+    //         serviceStatus = 0
+    //     } else {
+    //         serviceStatus++
+    //     }
+    //
+    //     const testService = {
+    //         name: "Test Service",
+    //         status: serviceStatus
+    //     }
+    //
+    //     ws.send(JSON.stringify({services: [testService], messages: []}));
+    // }, 3000);
+    //
+    // let messageId = messages.length;
+    // let messageLevel = 1;
+    // setInterval(() => {
+    //     if (messageLevel === 3) {
+    //         messageLevel = 1
+    //     } else {
+    //         messageLevel++
+    //     }
+    //
+    //     messageId++;
+    //
+    //     const testMessage = {
+    //         id: messageId,
+    //         level: messageLevel,
+    //         invoked: "2022-04-14Т18:49:41.2623951+03:00",
+    //         origin: "Test Service",
+    //         message: "Random message."
+    //     }
+    //
+    //     ws.send(JSON.stringify({services: [], messages: [testMessage]}));
+    // }, 4000);
 });
 
 app.get('/servicestates', (req, res) => {

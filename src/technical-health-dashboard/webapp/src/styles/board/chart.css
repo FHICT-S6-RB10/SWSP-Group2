@@ -1,11 +1,11 @@
-.chart {
-    width: 300px;
+.chart-container {
+    width: 250px;
     height: 200px;
     margin-left: auto;
     margin-bottom: 100px;
 }
 
-.chart svg {
+.chart-container svg {
     margin-bottom: 10px;
 }
 

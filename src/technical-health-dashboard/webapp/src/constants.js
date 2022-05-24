@@ -34,6 +34,12 @@ export const serviceColors = {
     [OFFLINE]: RED
 }
 
+export const serviceStatuses = {
+    [ONLINE]: 'Online',
+    [HAS_ERRORS]: 'Has Errors',
+    [OFFLINE]: 'Offline',
+}
+
 export const messageTitles = {
     [LOG]: 'Log',
     [WARNING]: 'Warning',
