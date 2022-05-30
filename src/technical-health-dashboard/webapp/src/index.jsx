@@ -5,12 +5,19 @@ import App from './components/App';
 import {envGet} from "./utils/envHelper";
 import {SOCKET_HOST, SOCKET_PORT} from "./constants";
 
+import { PublicClientApplication, InteractionType } from "@azure/msal-browser";
+import { MsalProvider, MsalAuthenticationTemplate } from "@azure/msal-react";
+import {appRoles, msalConfig} from "../azure-config";
+import {Auth} from "./components/Auth";
+
 import {createStore, applyMiddleware} from 'redux';
 import rootReducer from './store/reducers/rootReducer';
 import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
 import {setServices} from "./store/actions/serviceActions";
 import {setMessages} from "./store/actions/messageActions";
+
+const msalInstance = new PublicClientApplication(msalConfig);
 
 export const store = createStore(rootReducer, applyMiddleware(thunk));
 
@@ -32,7 +39,13 @@ client.onmessage = message => {
 ReactDOM.render(
     <Provider store={store}>
       <React.StrictMode>
-        <App />
+          <MsalProvider instance={msalInstance}>
+              <MsalAuthenticationTemplate interactionType={InteractionType.Redirect}>
+                  <Auth exact roles={[appRoles.Admin]}>
+                    <App />
+                  </Auth>
+              </MsalAuthenticationTemplate>
+          </MsalProvider>
       </React.StrictMode>
     </Provider>,
   document.getElementById('root')
