@@ -112,7 +112,295 @@ spec:
           protocol: TCP
           port: 8222
           targetPort: 8222 
+---
 
+#Raw Data Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: raw-data-service-depl
+spec:
+  selector:
+    matchLabels:
+      app: raw-data-service
+  template:
+    metadata:
+      labels:
+        app: raw-data-service
+    spec:
+      containers:
+        - name: raw-data-service
+          image: swspgroup2/raw-data-service:latest
+          resources:
+          # You need to specify the metric the HPA object will reference
+           limits:
+             cpu: 200m
+             memory: 500Mi
+           requests:
+             cpu: 100m
+             memory: 200Mi
+---
+# Raw Data Service Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: raw-data-service-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: raw-data-service
+  ports:
+   - name: raw-data-service-srv
+     protocol: TCP
+     port: 80
+     targetPort: 80
+   - name: raw-data-servicegrpc
+     protocol: TCP
+     port: 666
+     targetPort: 666
+---
+#Raw Data Service autoscaler
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: raw-data-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: raw-data-service-depl
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 75
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 400Mi
+---
+
+#Sensor Data Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sensor-data-service-depl
+spec:
+  selector:
+    matchLabels:
+      app: sensor-data-service
+  template:
+    metadata:
+      labels:
+        app: sensor-data-service
+    spec:
+      containers:
+        - name: sensor-data-service
+          image: swspgroup2/sensor-data-service:latest
+          resources:
+          # You need to specify the metric the HPA object will reference
+           limits:
+             cpu: 200m
+             memory: 500Mi
+           requests:
+             cpu: 100m
+             memory: 200Mi
+---
+# Sensor Data Service Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: sensor-data-service-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: sensor-data-service
+  ports:
+   - name: sensor-data-service-srv
+     protocol: TCP
+     port: 80
+     targetPort: 80
+   - name: sensor-data-servicegrpc
+     protocol: TCP
+     port: 666
+     targetPort: 666
+---
+#Sensor Data Service autoscaler
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: sensor-data-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: sensor-data-service-depl
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 75
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 400Mi
+---
+
+#Technical Health Service Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: technical-health-service-depl
+spec:
+  selector:
+    matchLabels:
+      app: technical-health-service
+  template:
+    metadata:
+      labels:
+        app: technical-health-service
+    spec:
+      containers:
+        - name: technical-health-service
+          image: swspgroup2/technical-health-service:latest
+          resources:
+          # You need to specify the metric the HPA object will reference
+           limits:
+             cpu: 200m
+             memory: 500Mi
+           requests:
+             cpu: 100m
+             memory: 200Mi
+---
+# Technical Health Service Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: technical-health-service-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: technical-health-service
+  ports:
+   - name: technical-health-service-srv
+     protocol: TCP
+     port: 80
+     targetPort: 80
+   - name: technical-health-servicegrpc
+     protocol: TCP
+     port: 666
+     targetPort: 666
+---
+#Technical Health Service autoscaler
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: technical-health-service-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: technical-health-service-depl
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 75
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 400Mi
+---
+
+#Technical Health Dashboard Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: technical-health-dashboard-depl
+spec:
+  selector:
+    matchLabels:
+      app: technical-health-dashboard
+  template:
+    metadata:
+      labels:
+        app: technical-health-dashboard
+    spec:
+      containers:
+        - name: technical-health-dashboard
+          image: swspgroup2/technical-health-dashboard:latest
+          resources:
+          # You need to specify the metric the HPA object will reference
+           limits:
+             cpu: 200m
+             memory: 500Mi
+           requests:
+             cpu: 100m
+             memory: 200Mi
+---
+# Technical Health Dashboard Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: technical-health-dashboard-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: technical-health-dashboard
+  ports:
+   - name: technical-health-dashboard-srv
+     protocol: TCP
+     port: 80
+     targetPort: 80
+   - name: technical-health-dashboardgrpc
+     protocol: TCP
+     port: 666
+     targetPort: 666
+---
+#Technical Health Dashboard autoscaler
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: technical-health-dashboard-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: technical-health-dashboard-depl
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 75
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: AverageValue
+        averageValue: 400Mi
+---
 
 
 
