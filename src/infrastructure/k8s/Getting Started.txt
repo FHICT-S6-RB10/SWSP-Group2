@@ -8,7 +8,7 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.5.0/a
 kubectl apply -f https://sunstone.dev/keel?namespace=default&username=admin&password=admin&tag=latest
 
 4) In a terminal run
- Kubectl Proxy
+ Kubectl proxy
 
 5) Follow the link and to get the token run the following command
 
