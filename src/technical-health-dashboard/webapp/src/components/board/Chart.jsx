@@ -5,7 +5,7 @@ import {messageColors, messageTitles} from "../../constants";
 import ReactTooltip from "react-tooltip";
 
 const Chart = props => {
-    const {selectedServices, messages} = props;
+    const {selectedServices, selectedTenant, messages} = props;
 
     const [filteredMessages, setFilteredMessages] = useState([]);
 
@@ -19,17 +19,26 @@ const Chart = props => {
         return selectedServices.indexOf(origin) > -1;
     }
 
+    const selectedByTenant = tenantId => {
+        return selectedTenant === tenantId;
+    }
+
     useEffect(() => {
         let newFilteredMessages = messages;
 
-        if(selectedServices.length !== 0) {
+        if (selectedTenant) {
+            // If the tenant that the message originates from is selected
+            newFilteredMessages = newFilteredMessages.filter(message => selectedByTenant(message.tenantId));
+        }
+
+        if (selectedServices.length !== 0) {
             // If the service that the message originates from is selected
-            newFilteredMessages = messages.filter(message => selectedByOrigin(message.origin));
+            newFilteredMessages = newFilteredMessages.filter(message => selectedByOrigin(message.origin));
         }
 
         setFilteredMessages(newFilteredMessages);
 
-    }, [selectedServices, messages]);
+    }, [selectedServices, selectedTenant, messages]);
 
     useEffect(() => {
         const newCounts = {};

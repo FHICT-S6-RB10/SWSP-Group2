@@ -9,6 +9,7 @@ import {ERROR, LOG, WARNING} from "../../constants";
 const Board = () => {
     const {selectedServices} = useSelector(state => state.services);
     const {messages} = useSelector(state => state.messages);
+    const {selectedTenant} = useSelector(state => state.tenants);
 
     const [selectedTabs, setSelectedTabs] = useState([LOG, WARNING, ERROR]);
 
@@ -16,6 +17,7 @@ const Board = () => {
         <div className="board">
             <Chart
                 selectedServices={selectedServices}
+                selectedTenant={selectedTenant}
                 messages={messages}
             />
             <TabContainer
@@ -25,6 +27,7 @@ const Board = () => {
             <MessageContainer
                 selectedTabs={selectedTabs}
                 selectedServices={selectedServices}
+                selectedTenant={selectedTenant}
                 messages={messages}
             />
         </div>
