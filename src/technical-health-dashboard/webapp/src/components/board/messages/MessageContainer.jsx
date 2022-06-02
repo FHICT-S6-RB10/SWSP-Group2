@@ -4,7 +4,7 @@ import Message from "./Message";
 import {sortMessagesByDate} from "../../../utils/messages";
 
 const MessageContainer = (props) => {
-    const {selectedTabs, selectedServices, messages} = props;
+    const {selectedTabs, selectedServices, selectedTenant, messages} = props;
 
     const [filteredMessages, setFilteredMessages] = useState([]);
     const [styledMessages, setStyledMessages] = useState([]);
@@ -17,20 +17,28 @@ const MessageContainer = (props) => {
         return selectedTabs.indexOf(level.toString()) > -1;
     }
 
-    useEffect(() => {
-        let newFilteredMessages;
+    const selectedByTenant = tenantId => {
+        return selectedTenant === tenantId;
+    }
 
-        if(selectedServices.length === 0) {
-            newFilteredMessages = messages.filter(message => selectedByLevel(message.level));
-        } else {
-            newFilteredMessages = messages.filter(message => selectedByLevel(message.level) && selectedByOrigin(message.origin));
+    useEffect(() => {
+        let newFilteredMessages = messages;
+
+        if (selectedTenant) {
+            newFilteredMessages = newFilteredMessages.filter(message => selectedByTenant(message.tenantId));
         }
+
+        if (selectedServices.length > 0) {
+            newFilteredMessages = newFilteredMessages.filter(message => selectedByOrigin(message.origin));
+        }
+
+        newFilteredMessages = newFilteredMessages.filter(message => selectedByLevel(message.level));
 
         sortMessagesByDate(newFilteredMessages);
 
         setFilteredMessages(newFilteredMessages);
 
-    }, [selectedTabs, selectedServices, messages])
+    }, [selectedTabs, selectedServices, selectedTenant, messages])
 
     useEffect(() => {
         const newStyledMessages = filteredMessages.map(message => (

@@ -16,6 +16,7 @@ import {Provider} from 'react-redux';
 import thunk from 'redux-thunk';
 import {setServices} from "./store/actions/serviceActions";
 import {setMessages} from "./store/actions/messageActions";
+import {setTenants} from "./store/actions/tenantActions";
 
 const msalInstance = new PublicClientApplication(msalConfig);
 
@@ -34,6 +35,7 @@ client.onmessage = message => {
 
     if (receivedServices && receivedServices.length > 0) store.dispatch(setServices(receivedServices));
     if (receivedMessages && receivedMessages.length > 0) store.dispatch(setMessages(receivedMessages));
+    if (receivedMessages && receivedMessages.length > 0) store.dispatch(setTenants(receivedMessages));
 }
 
 ReactDOM.render(
