@@ -31,23 +31,23 @@ const services = [
 ];
 
 const messages = [
-    {id: 1, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Service working as expected"},
-    {id: 2, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Service working as expected"},
-    {id: 3, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Connection is weak!"},
-    {id: 4, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Connection is weak!"},
-    {id: 5, level: parseInt(ERROR), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Not receiving heartbeat!"},
+    {tenantId: "53bcd16-dcd3-11ec-9d64-0242ac120002", id: 1, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Service working as expected"},
+    {tenantId: "53bcd16-dcd3-11ec-9d64-0242ac120002", id: 2, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Service working as expected"},
+    {tenantId: "41fst56-dcd3-11ec-9d64-0242ac120002", id: 3, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Connection is weak!"},
+    {tenantId: "41fst56-dcd3-11ec-9d64-0242ac120002", id: 4, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Connection is weak!"},
+    {tenantId: "41fst56-dcd3-11ec-9d64-0242ac120002", id: 5, level: parseInt(ERROR), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Not receiving heartbeat!"},
 
-    {id: 6, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
-    {id: 7, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
-    {id: 8, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Processing takes longer than expected!"},
-    {id: 9, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
-    {id: 10, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
+    {tenantId: "53bcd16-dcd3-11ec-9d64-0242ac120002", id: 6, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
+    {tenantId: "53bcd16-dcd3-11ec-9d64-0242ac120002", id: 7, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
+    {tenantId: "53bcd16-dcd3-11ec-9d64-0242ac120002", id: 8, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Processing takes longer than expected!"},
+    {tenantId: "41fst56-dcd3-11ec-9d64-0242ac120002", id: 9, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
+    {tenantId: "41fst56-dcd3-11ec-9d64-0242ac120002", id: 10, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Sensor Data Service", message: "Service working as expected"},
 
-    {id: 11, level: parseInt(ERROR), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Raw Data Service", message: "Stopped receiving data!"},
-    {id: 12, level: parseInt(ERROR), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Raw Data Service", message: "Stopped receiving data!"},
-    {id: 13, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Raw Data Service", message: "Service working as expected"},
-    {id: 14, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Raw Data Service", message: "Default data format is not set!"},
-    {id: 15, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Raw Data Service", message: "Service working as expected"},
+    {tenantId: "53bcd16-dcd3-11ec-9d64-0242ac120002", id: 11, level: parseInt(ERROR), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Raw Data Service", message: "Stopped receiving data!"},
+    {tenantId: "41fst56-dcd3-11ec-9d64-0242ac120002", id: 12, level: parseInt(ERROR), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Raw Data Service", message: "Stopped receiving data!"},
+    {tenantId: "41fst56-dcd3-11ec-9d64-0242ac120002", id: 13, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Raw Data Service", message: "Service working as expected"},
+    {tenantId: "41fst56-dcd3-11ec-9d64-0242ac120002", id: 14, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Raw Data Service", message: "Default data format is not set!"},
+    {tenantId: "41fst56-dcd3-11ec-9d64-0242ac120002", id: 15, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Raw Data Service", message: "Service working as expected"},
 ]
 
 const wss = new WebSocketServer({ port: 8080 });
