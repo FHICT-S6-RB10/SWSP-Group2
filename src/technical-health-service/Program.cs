@@ -152,6 +152,7 @@ void OnLoggingEvent(object sender, MsgHandlerEventArgs args, WatsonWsServer serv
     var deserializedMessage = JsonDocument.Parse(receivedMessage);
     var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
     var origin = deserializedMessage.RootElement.GetProperty("origin").ToString();
+    var tenantId = deserializedMessage.RootElement.GetProperty("tenantId").ToString();
 
     var logLevel = getLogLevelFor(subject);
 
@@ -159,7 +160,7 @@ void OnLoggingEvent(object sender, MsgHandlerEventArgs args, WatsonWsServer serv
     {
         var repo = app.Services.GetService<ServiceLoggingRepository>();
         int id = 1000 + repo.GetAll().Count();
-        var message = new LogMessage(id, logLevel, origin, decodedMessage, DateTime.Now);
+        var message = new LogMessage(id, logLevel, origin, decodedMessage, DateTime.Now, tenantId);
         if (repo != null)
         {
             repo.Create(message);
@@ -220,7 +221,7 @@ app.MapGet("/logs", ([FromServices] ServiceLoggingRepository repo) =>
 // Used for testing
 app.MapGet("/publishmessage", ([FromServices] ServiceStateRepository repo) =>
 {
-    var request = new Request("authentication", "heartbeat", "technical-health-service");
+    var request = new Request("authentication", "heartbeat", "technical-health-service", "mock-tenant-id");
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
     c.Publish("technical_health", message);
     return "Message published";
@@ -230,7 +231,7 @@ app.MapGet("/publishmessage", ([FromServices] ServiceStateRepository repo) =>
 // Used for testing
 app.MapGet("/publishlog", ([FromServices] ServiceStateRepository repo) =>
 {
-    var request = new Request("authentication", "New user added!", "technical-health-service");
+    var request = new Request("authentication", "New user added!", "technical-health-service", "mock-tenant-id");
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
     c.Publish("th_logs", message);
     return "Log message published";
@@ -240,7 +241,7 @@ app.MapGet("/publishlog", ([FromServices] ServiceStateRepository repo) =>
 // Used for testing
 app.MapGet("/publishwarning", ([FromServices] ServiceStateRepository repo) =>
 {
-    var request = new Request("authentication", "The added user has an empty Email field!", "technical-health-service");
+    var request = new Request("authentication", "The added user has an empty Email field!", "technical-health-service", "mock-tenant-id");
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
     c.Publish("th_warnings", message);
     return "Warning message published";
@@ -250,7 +251,7 @@ app.MapGet("/publishwarning", ([FromServices] ServiceStateRepository repo) =>
 // Used for testing
 app.MapGet("/publisherror", ([FromServices] ServiceStateRepository repo) =>
 {
-    var request = new Request("authentication", "Could not add the specified user!", "technical-health-service");
+    var request = new Request("authentication", "Could not add the specified user!", "technical-health-service", "mock-tenant-id");
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
     c.Publish("th_errors", message);
     return "Error message published";
@@ -270,9 +271,9 @@ app.Run();
 #region Data Management
 internal record ServiceState(string name, ServiceStatus status, DateTime lastUpdated);
 
-internal record LogMessage(int id, LogLevel level, string origin, string message, DateTime invoked);
+internal record LogMessage(int id, LogLevel level, string origin, string message, DateTime invoked, string tenantId);
 
-internal record Request(string origin, string message, string target);
+internal record Request(string origin, string message, string target, string tenantId);
 
 enum ServiceStatus
 {
