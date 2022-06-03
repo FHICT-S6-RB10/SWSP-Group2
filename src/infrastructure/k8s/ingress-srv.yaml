@@ -13,6 +13,7 @@ spec:
     - host: swsp.com
       http:
         paths:
+          #Eventbus
           - path: /eventbus
             pathType: Prefix
             backend:
@@ -20,6 +21,7 @@ spec:
                 name: event-bus-clusterip-srv
                 port:
                   number: 80
+          #Nats
           - path: /nats
             pathType: Prefix
             backend:
@@ -27,6 +29,66 @@ spec:
                 name: nats-clusterip-srv
                 port:
                   number: 4222
+          #Technical Health Dashboard
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: technical-health-dashboard-clusterip-srv
+                port:
+                  number: 80
+          #Technical Health Service
+          - path: /servicestates
+            pathType: Prefix
+            backend:
+              service:
+                name: technical-health-service-clusterip-srv
+                port:
+                  number: 80
+          - path: /logs
+            pathType: Prefix
+            backend:
+              service:
+                name: technical-health-service-clusterip-srv
+                port:
+                  number: 80
+          #Raw Data Service
+          - path: /publishheart
+            pathType: Prefix
+            backend:
+              service:
+                name: raw-data-service-clusterip-srv
+                port:
+                  number: 80
+          - path: /publishskin
+            pathType: Prefix
+            backend:
+              service:
+                name: raw-data-service-clusterip-srv
+                port:
+                  number: 80
+          - path: /measurements
+            pathType: Prefix
+            backend:
+              service:
+                name: raw-data-service-clusterip-srv
+                port:
+                  number: 80
+          #Sensor Data Service
+          - path: /measurements/RR
+            pathType: Prefix
+            backend:
+              service:
+                name: sensor-data-service-clusterip-srv
+                port:
+                  number: 80
+          - path: /measurements/SkinConductance
+            pathType: Prefix
+            backend:
+              service:
+                name: sensor-data-service-clusterip-srv
+                port:
+                  number: 80
 
 
           
