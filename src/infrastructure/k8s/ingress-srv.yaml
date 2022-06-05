@@ -37,21 +37,6 @@ spec:
                 name: technical-health-dashboard-clusterip-srv
                 port:
                   number: 80
-          #Technical Health Service
-          - path: /servicestates
-            pathType: Prefix
-            backend:
-              service:
-                name: technical-health-service-clusterip-srv
-                port:
-                  number: 80
-          - path: /logs
-            pathType: Prefix
-            backend:
-              service:
-                name: technical-health-service-clusterip-srv
-                port:
-                  number: 80
           #Raw Data Service
           - path: /publishheart
             pathType: Prefix
