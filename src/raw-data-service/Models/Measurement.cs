@@ -14,6 +14,8 @@ namespace Raw_Data_Service.Models
 
         public string WearableId { get; set; }
 
+        public string Timestamp { get; set; }
+
         public BsonDocument Data { get; set; }
     }
 }
