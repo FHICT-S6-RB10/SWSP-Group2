@@ -30,7 +30,7 @@ spec:
                 port:
                   number: 4222
           #Technical Health Dashboard
-          - path: /
+          - path: /thd
             pathType: Prefix
             backend:
               service:
@@ -46,13 +46,6 @@ spec:
                 port:
                   number: 80
           - path: /publishskin
-            pathType: Prefix
-            backend:
-              service:
-                name: raw-data-service-clusterip-srv
-                port:
-                  number: 80
-          - path: /measurements
             pathType: Prefix
             backend:
               service:
