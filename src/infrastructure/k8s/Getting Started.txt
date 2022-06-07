@@ -12,6 +12,8 @@ kubectl apply -f https://sunstone.dev/keel?namespace=default&username=admin&pass
 
 kubectl apply -f swsp-depl.yaml
 
+kubectl apply -f ingress-srv.yaml
+
 5) Get a token run the following command
 
 Docker >V4.8
