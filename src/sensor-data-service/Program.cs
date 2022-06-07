@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using System.Text.Json.Nodes;
 
 var builder = WebApplication.CreateBuilder(args);
+string localTenantID = null;
 //builder.Services.AddSingleton<MeasurementRepo>();
 
 //var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -23,31 +24,26 @@ opts.Url = "nats://host.docker.internal:4222";
 
 IConnection c = cf.CreateConnection(opts);
 
-//EventHandler<MsgHandlerEventArgs> h = (sender, args) =>
-//{
-//    Console.WriteLine($"Received {args.Message}");
-//    string receivedMessage = Encoding.UTF8.GetString(args.Message.Data);
-//    var deserializedMessage = JsonDocument.Parse(receivedMessage);
-//    var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
-//    var origin = deserializedMessage.RootElement.GetProperty("origin").ToString();
+EventHandler<MsgHandlerEventArgs> heartbeatHandler = (sender, args) => OnTenantIdEvent(sender, args);
 
-//    if (decodedMessage.ToLower() == "ping")
-//    {
-//        var reply = args.Message.Reply;
-//        var replyMessage = Encoding.UTF8.GetBytes("th_status_recieved");
-//        c.Publish(reply, replyMessage);
-//        Console.WriteLine($"Published message {Encoding.UTF8.GetString(replyMessage)} to {reply} ");
-//        //client.PostAsync(uri, new StringContent(jsonInString, Encoding.UTF8, "application/json"));
+void OnTenantIdEvent(object sender, MsgHandlerEventArgs args)
+{
+    string receivedMessage = Encoding.UTF8.GetString(args.Message.Data);
+    var deserializedMessage = JsonDocument.Parse(receivedMessage);
+    var decodedMessage = deserializedMessage.RootElement.GetProperty("message").ToString();
+    var tenantId = deserializedMessage.RootElement.GetProperty("tenantId").ToString();
 
-//    }
-//};
-
+    if (decodedMessage.ToLower() == "tenantid")
+    {
+        localTenantID = tenantId;
+    }
+}
 
 Timer timer = new Timer(TimerCallback, null, 0, 20000);
 
 void TimerCallback(object? state)
 {
-    var request = new Request("sensor_data_service", "technical_health", "heartbeat");
+    var request = new Request("sensor_data_service", "technical_health", "heartbeat", localTenantID);
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
     c.Publish("technical_health", message);
     Console.WriteLine("Message techincal-health-service");
@@ -156,13 +152,14 @@ public class SkinConductance
 
     public List<double> NormalizeFrequency(double[] records, int frequency)
     {
+        int freq = frequency / 4;
         List<double> normalizedArr = new List<double>();
-        for (int i = 0; i < records.Length; i += frequency)
+        for (int i = 0; i < records.Length; i += freq)
         {
-            if (i + frequency >= records.Length)
-                frequency = records.Length - i;
-            double[] subArray = new double[frequency];
-            Array.Copy(records, i, subArray, 0, frequency);
+            if (i + freq >= records.Length)
+                freq = records.Length - i;
+            double[] subArray = new double[freq];
+            Array.Copy(records, i, subArray, 0, freq);
             normalizedArr.Add(subArray.Average());
         }
         return normalizedArr;
@@ -201,12 +198,14 @@ public class RR
 {
     public string patientId { get; set; }
     public string wearableId { get; set; }
+    public string timestamp { get; set; }
     public double[] records { get; set; }
 
-    public RR(string patientId, string wearableId, double[] records)
+    public RR(string patientId, string wearableId, string timestamp, double[] records)
     {
         this.patientId = patientId;
         this.wearableId = wearableId;
+        this.timestamp= timestamp;
         this.records = records;
     }
 
@@ -241,7 +240,7 @@ public class RR
     }
 }
 
-internal record Request(string origin, string target, string message);
+internal record Request(string origin, string target, string message, string tenantId);
 internal record HeartData(string origin, string target, Heart message);
 internal record RRData(string origin, string target, RR message);
 internal record SkinConductanceData(string origin, string target, SkinConductance message);

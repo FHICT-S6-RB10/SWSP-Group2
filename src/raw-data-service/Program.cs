@@ -5,12 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Text;
 using System.Text.Json;
+using System.Dynamic;
 using Raw_Data_Service.Models;
 using Raw_Data_Service.Services;
 using MongoDB.Bson;
 using Newtonsoft.Json.Linq;
 using MongoDB.Bson.Serialization;
-// using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,26 +38,34 @@ EventHandler<MsgHandlerEventArgs> h = async (sender, args) =>
 
     var repo = app.Services.GetService<MeasurementsService>();
     Measurement m = new Measurement();
+
+    dynamic jsonData = new ExpandoObject();
+
     foreach (JProperty property in json.Properties())
     {
-        if((property.Name).ToString().ToLower() == "patientid"){
+        var name = property.Name.ToString();
+        if(name.ToLower() == "patientid"){
             m.PatientId = property.Value.ToString();
             continue;
         }
-        if((property.Name).ToString().ToLower() == "wearableid"){
+        if(name.ToLower() == "wearableid"){
             m.WearableId = property.Value.ToString();
             continue;
         }
+        if(name.ToLower() == "timestamp"){
+            m.Timestamp = property.Value.ToString();
+            continue;
+        }
+ 
+        AddProperty(jsonData, name, property.Value); //assigns all wearable data to a dynamic object 
 
-        var jsonData = property.Value;
-
-        BsonDocument doc = BsonDocument.Parse(jsonData.ToString());
-
-        m.Data = doc;
     }
+    //Converts and saves the wearable data to the "Data" property and adds measurement to the database
+    BsonDocument doc = BsonDocument.Parse(Newtonsoft.Json.JsonConvert.SerializeObject(jsonData).ToString());
+
+    m.Data = doc;
 
     await repo.CreateAsync(m);
-
 };
 
 IAsyncSubscription s = c.SubscribeAsync("measurement:created", h);
@@ -73,6 +81,16 @@ void TimerCallback(object? state)
     Console.WriteLine("Heartbeat message published");
 }
 
+//Method to add properties to dynamic objects
+static void AddProperty(ExpandoObject expando, string propertyName, object propertyValue)
+{
+    var expandoDict = expando as IDictionary<string, object>;
+    if (expandoDict.ContainsKey(propertyName))
+        expandoDict[propertyName] = propertyValue;
+    else
+        expandoDict.Add(propertyName, propertyValue);
+}
+
 // Used for testing purposes
 app.MapGet("/publishheart", async () =>
 {
@@ -80,17 +98,12 @@ app.MapGet("/publishheart", async () =>
     {
         patientId = "13g1f1qd3asd",
         wearableId = "04141da341",
-        jsonContent = new
-        {
-            Timestamp = "21/02/2022 18:49:47",
-            Heart = 83,
-            Interval = 726,
-            RMSSD = 32.95,
-            Event = "None"
-        }
+        timestamp = "21/02/2022 18:49:47",
+        heart = 83,
+        interval = 726,
+        eventI = "None",
     };
     string json = JsonSerializer.Serialize(jsonData);
-    // Console.WriteLine("JsonData= " + json);
     var request = new Request("raw_data_service", json, "measurement:created");
     var message = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(request));
     c.Publish("measurement:created", message);
@@ -99,16 +112,13 @@ app.MapGet("/publishheart", async () =>
 
 app.MapGet("/publishskin", async () =>
 {
-    int[] records = {185,184,1825,1825,182,1825,1825,1825,182,1815,1805,1795,1795,1795,1795,1795};
+    int[] recordsArray = {185,184,1825,1825,182,1825,1825,1825,182,1815,1805,1795,1795,1795,1795,1795};
     var jsonData = new
     {
         patientId = "13g1f1qd3asd",
         wearableId = "04141da341",
-        jsonContent = new
-        {
-            Frequency= "16hz",
-            Records = records
-        }
+        frequency = 4,
+        records = recordsArray,
     };
     string json = JsonSerializer.Serialize(jsonData);
     var request = new Request("raw_data_service", json, "measurement:created");
@@ -117,32 +127,6 @@ app.MapGet("/publishskin", async () =>
     Console.WriteLine("New measurement published");
 });
 
-#endregion
-
-#region api calls
-//Getting all measurements 
-app.MapGet("/measurements", async ([FromServices] MeasurementsService repo) =>
-{
-    List<Measurement> mesurs = await repo.GetAsync();
-    foreach (var me in mesurs)
-    {
-        Console.WriteLine($"ID: {me.Id} DATA:{me.Data}");
-    };
-});
-// Creates a new demo measurement for testing purposes
-app.MapPost("/measurements", async ([FromServices] MeasurementsService repo) =>
-{
-    Measurement m = new Measurement();
-    m.Data = new { heartRate = new { average = 69, rrData = 681 } }.ToBsonDocument();
-    //     m.Data = new BsonDocument{
-    //     {"heartRate", new BsonDocument {
-    //        {"average", 82.5 },
-    //        {"rrData", 710}
-    //     }}
-    // };
-    await repo.CreateAsync(m);
-    return ($"{m} should be created");
-});
 #endregion
 
 app.Run();
