@@ -45,9 +45,14 @@ void OnOrganizationIdEvent(object sender, MsgHandlerEventArgs args)
 
     JObject json = JObject.Parse(decodedMessage);
 
-    if (json.id != null)
+    foreach (JProperty property in json.Properties())
     {
-        localOrganizationID = json.id;
+        var name = property.Name.ToString();
+        if (name.ToLower() == "id")
+        {
+            localOrganizationID = property.Value.ToString();
+            break;
+        }
     }
 }
 
