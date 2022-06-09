@@ -29,14 +29,6 @@ spec:
                 name: nats-clusterip-srv
                 port:
                   number: 4222
-          #Technical Health Dashboard
-          - path: /thd
-            pathType: Prefix
-            backend:
-              service:
-                name: technical-health-dashboard-clusterip-srv
-                port:
-                  number: 80
           #Raw Data Service
           - path: /publishheart
             pathType: Prefix
