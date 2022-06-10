@@ -31,7 +31,7 @@ const services = [
 ];
 
 const messages = [
-    {tenantId: "53bcd16-dcd3-11ec-9d64-0242ac120002", id: 1, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Service working as expected"},
+    {tenantId: "53bcd16dcd311ec9d640242ac120002", id: 1, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected Service working as expected "},
     {tenantId: "53bcd16-dcd3-11ec-9d64-0242ac120002", id: 2, level: parseInt(LOG), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Service working as expected"},
     {tenantId: "41fst56-dcd3-11ec-9d64-0242ac120002", id: 3, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Connection is weak!"},
     {tenantId: "41fst56-dcd3-11ec-9d64-0242ac120002", id: 4, level: parseInt(WARNING), invoked: "2022-04-14Т18:49:41.2623951+02:00", origin: "Technical Health Service", message: "Connection is weak!"},

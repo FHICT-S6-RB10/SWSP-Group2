@@ -45,7 +45,7 @@ const ServiceContainer = () => {
     const tenantOptions = () => {
         return tenants.map(tenant =>
             <option key={tenant} value={tenant}>
-                {tenant.substring(0, tenant.indexOf('-'))}
+                {tenant.substring(0, tenant.indexOf('-') > 0 ? tenant.indexOf('-') : 10)}
             </option>
         );
     }

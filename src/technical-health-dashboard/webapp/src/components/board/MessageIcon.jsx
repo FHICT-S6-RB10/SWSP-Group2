@@ -6,7 +6,9 @@ const MessageIcon = props => {
 
     return (
         <div className={usedIn} style={{color: messageColors[level]}}>
-            <i className={messageIcons[level]}/>
+            <div>
+                <i className={messageIcons[level]}/>
+            </div>
         </div>
     );
 }
