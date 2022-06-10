@@ -5,6 +5,7 @@
     border: 1px solid black;
     border-radius: 5px;
     font-size: 14px;
+    max-height: 70px;
 }
 
 .message-date {
@@ -19,11 +20,15 @@
 
 .message-text {
     width: 40%;
+    max-height: 60px;
+    overflow-y: auto;
 }
 
 .message-icon {
-    display: inline-block;
+    display: flex;
+    align-items: center;
     background-color: black;
     border-radius: 4px 0 0 4px;
     padding: 5px;
+    height: 60px;
 }
