@@ -32,7 +32,7 @@ IConnection c = cf.CreateConnection(opts);
 #region organization credentials
 
 //Name of current organization
-string localOrganizationID = null;
+string localOrganizationID = "2e830c86-a94c-45f7-87e8-f137b72406ff";
 
 //Gets the current organization from message
 EventHandler<MsgHandlerEventArgs> organizationHandler = (sender, args) => OnOrganizationIdEvent(sender, args);
